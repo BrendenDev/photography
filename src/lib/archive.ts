@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 /**
  * Resolve a content-relative path to a full URL.
- * Converts "content/collections/foo/images/bar.webp" to "/photography/content/collections/foo/images/bar.webp"
+ * Converts "content/collections/foo/images/bar.webp" to "/content/collections/foo/images/bar.webp"
  */
 export function resolveContentUrl(path: string): string {
   if (!path) return '';

@@ -73,7 +73,7 @@ function AppContent() {
 
 function App() {
   return (
-    <Router basename="/photography">
+    <Router basename="/">
       <AppContent />
     </Router>
   );
