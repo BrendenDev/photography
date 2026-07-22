@@ -14,6 +14,7 @@ export default function HomePage() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [openCollection, setOpenCollection] = useState<Collection | null>(null);
+  const [startAtEnd, setStartAtEnd] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,7 +38,11 @@ export default function HomePage() {
     }
   }, [collections]);
 
-  const handleSelect = useCallback((c: Collection) => setOpenCollection(c), []);
+  const handleSelect = useCallback((c: Collection) => { setStartAtEnd(false); setOpenCollection(c); }, []);
+  const handleSwitchCollection = useCallback((c: Collection, direction: 'next' | 'prev') => {
+    setStartAtEnd(direction === 'prev');
+    setOpenCollection(c);
+  }, []);
   const handleClose = useCallback(() => {
     setOpenCollection(null);
     setSearchParams({}, { replace: true });
@@ -55,6 +60,12 @@ export default function HomePage() {
     const results = fuse.search(searchQuery);
     return new Set(results.map(r => r.item.slug));
   }, [searchQuery, fuse]);
+
+  // Ordered list of navigable collections (respects search filter)
+  const navigableCollections = useMemo(() => {
+    if (!matchingSlugs) return collections;
+    return collections.filter(c => matchingSlugs.has(c.slug));
+  }, [collections, matchingSlugs]);
 
   // Keyboard shortcut: / to open search
   useEffect(() => {
@@ -225,7 +236,16 @@ export default function HomePage() {
         </div>
       </div>
 
-      {openCollection && <OpenBook collection={openCollection} onClose={handleClose} />}
+      {openCollection && (
+        <OpenBook 
+          key={openCollection.slug}
+          collection={openCollection} 
+          onClose={handleClose}
+          allCollections={navigableCollections}
+          onSwitchCollection={handleSwitchCollection}
+          startAtEnd={startAtEnd}
+        />
+      )}
     </div>
   );
 }

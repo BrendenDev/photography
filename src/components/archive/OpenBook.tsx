@@ -9,19 +9,29 @@ import ProgressiveImage from '../ui/ProgressiveImage';
 interface OpenBookProps {
   collection: Collection;
   onClose: () => void;
+  /** Ordered list of collections available for navigation (respects search filter) */
+  allCollections?: Collection[];
+  /** Called when user navigates to a different collection */
+  onSwitchCollection?: (collection: Collection, direction: 'next' | 'prev') => void;
+  /** If true, start at the last photo instead of the title page */
+  startAtEnd?: boolean;
 }
 
-export default function OpenBook({ collection, onClose }: OpenBookProps) {
+export default function OpenBook({ collection, onClose, allCollections, onSwitchCollection, startAtEnd }: OpenBookProps) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [direction, setDirection] = useState(0);
+
   const [showInfo, setShowInfo] = useState(false);
   const touchStartX = useRef(0);
 
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Local state for page index — read initial value from URL for deep-linking
+  // Local state for page index — only read from URL if the book param matches this collection
+  // -2 = "pending jump to end" (shows loading, no title page flicker)
   const [currentIndex, setCurrentIndex] = useState(() => {
+    if (startAtEnd) return -2; // Will be set to last photo once loaded
+    const bookParam = searchParams.get('book');
+    if (bookParam !== collection.slug) return -1;
     const p = searchParams.get('p');
     if (p === null) return -1;
     const n = parseInt(p, 10);
@@ -31,7 +41,15 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
 
   useEffect(() => {
     loadPhotos(collection.slug)
-      .then(p => { setPhotos(p); setLoading(false); })
+      .then(p => {
+        setPhotos(p);
+        // If navigating backwards, jump directly to last photo (no animation)
+        if (startAtEnd && p.length > 0) {
+          setCurrentIndex(p.length - 1);
+          setSearchParams({ book: collection.slug, p: String(p.length - 1) }, { replace: true });
+        }
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, [collection.slug]);
 
@@ -46,6 +64,14 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
   const hasNext = currentIndex < totalPages - 1;
   const hasPrev = currentIndex > -1;
 
+  // Collection navigation
+  const collectionIndex = allCollections?.findIndex(c => c.slug === collection.slug) ?? -1;
+  const prevCollection = collectionIndex > 0 ? allCollections![collectionIndex - 1] : null;
+  const nextCollection = allCollections && collectionIndex >= 0 && collectionIndex < allCollections.length - 1
+    ? allCollections[collectionIndex + 1] : null;
+  const canGoPrevCollection = !!prevCollection && !!onSwitchCollection;
+  const canGoNextCollection = !!nextCollection && !!onSwitchCollection;
+
   const goTo = useCallback((index: number) => {
     setShowInfo(false);
     setCurrentIndex(index);
@@ -57,12 +83,14 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
   }, [collection.slug, setSearchParams]);
 
   const goNext = useCallback(() => {
-    if (hasNext) { setDirection(1); goTo(currentIndex + 1); }
-  }, [hasNext, currentIndex, goTo]);
+    if (hasNext) { goTo(currentIndex + 1); }
+    else if (nextCollection && onSwitchCollection) { onSwitchCollection(nextCollection, 'next'); }
+  }, [hasNext, currentIndex, goTo, nextCollection, onSwitchCollection]);
 
   const goPrev = useCallback(() => {
-    if (hasPrev) { setDirection(-1); goTo(currentIndex - 1); }
-  }, [hasPrev, currentIndex, goTo]);
+    if (hasPrev) { goTo(currentIndex - 1); }
+    else if (prevCollection && onSwitchCollection) { onSwitchCollection(prevCollection, 'prev'); }
+  }, [hasPrev, currentIndex, goTo, prevCollection, onSwitchCollection]);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -98,12 +126,14 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
     }
   }, [currentIndex, photos]);
 
-  // Slide variants — pure horizontal slide
-  const slideVariants = useMemo(() => ({
-    enter: (d: number) => ({ x: d >= 0 ? '100%' : '-100%' }),
-    center: { x: 0 },
-    exit: (d: number) => ({ x: d > 0 ? '-100%' : '100%' }),
+  // Fade through darkness — pages dissolve into shadow and re-emerge
+  const pageVariants = useMemo(() => ({
+    enter: { opacity: 0, scale: 0.97, filter: 'brightness(0.3)' },
+    center: { opacity: 1, scale: 1, filter: 'brightness(1)' },
+    exit: { opacity: 0, scale: 0.97, filter: 'brightness(0.3)' },
   }), []);
+
+  const pageTransition = { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] };
 
   return (
     <motion.div
@@ -133,17 +163,21 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
           if (Math.abs(dx) > 50) { dx < 0 ? goNext() : goPrev(); }
         }}
       >
-          <AnimatePresence mode="wait" custom={direction} initial={false}>
-            {currentIndex === -1 ? (
+          <AnimatePresence mode="wait" initial={false}>
+            {currentIndex === -2 ? (
+              /* PENDING: waiting for photos to load before jumping to end */
+              <div key="pending-load" className="flex items-center justify-center w-full h-full bg-arcane-void">
+                <SpellCircle size={80} glowColor="amber" animate={true} />
+              </div>
+            ) : currentIndex === -1 ? (
               /* TITLE PAGE */
               <motion.div
                 key="title-spread"
-                custom={direction}
-                variants={slideVariants}
+                variants={pageVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                transition={pageTransition}
                 className="flex flex-col md:flex-row w-full h-full"
               >
                 {/* Left — scrollable photo grid */}
@@ -153,7 +187,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
                       {photos.map((photo, i) => (
                         <button
                           key={photo.slug || i}
-                          onClick={() => { setDirection(1); goTo(i); }}
+                          onClick={() => goTo(i)}
                           className="relative aspect-square overflow-hidden group"
                         >
                           <ProgressiveImage
@@ -253,12 +287,11 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
               /* PHOTO SPREAD */
               <motion.div
                 key={`photo-${currentIndex}`}
-                custom={direction}
-                variants={slideVariants}
+                variants={pageVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                transition={pageTransition}
                 className="w-full h-full relative cursor-pointer"
                 onClick={() => setShowInfo(s => !s)}
               >
@@ -339,14 +372,24 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
       </motion.div>
 
       {/* Nav arrows */}
-      {hasPrev && (
-        <button onClick={goPrev} className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all" aria-label="Previous">
+      {(hasPrev || canGoPrevCollection) && (
+        <button onClick={goPrev} className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all group" aria-label="Previous">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          {!hasPrev && prevCollection && (
+            <span className="absolute right-full mr-2 whitespace-nowrap text-[10px] text-white/50 font-heading tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+              {prevCollection.title}
+            </span>
+          )}
         </button>
       )}
-      {hasNext && (
-        <button onClick={goNext} className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all" aria-label="Next">
+      {(hasNext || canGoNextCollection) && (
+        <button onClick={goNext} className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all group" aria-label="Next">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          {!hasNext && nextCollection && (
+            <span className="absolute left-full ml-2 whitespace-nowrap text-[10px] text-white/50 font-heading tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+              {nextCollection.title}
+            </span>
+          )}
         </button>
       )}
 
@@ -368,7 +411,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
           <>
             <span className="text-[10px] text-white/20">·</span>
             <button
-              onClick={() => { setDirection(-1); goTo(-1); }}
+              onClick={() => goTo(-1)}
               className="text-[10px] text-white/40 hover:text-white/70 font-heading tracking-[0.1em] transition-colors"
             >
               ← Title Page
@@ -379,6 +422,14 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
         <span className="text-[10px] text-white/30 font-body">
           {currentIndex >= 0 ? 'Click photo for details' : 'ESC to close'}
         </span>
+        {(canGoPrevCollection || canGoNextCollection) && (
+          <>
+            <span className="text-[10px] text-white/20">·</span>
+            <span className="text-[10px] text-white/30 font-body">
+              {allCollections ? `${collectionIndex + 1} / ${allCollections.length} volumes` : ''}
+            </span>
+          </>
+        )}
       </div>
     </motion.div>
   );

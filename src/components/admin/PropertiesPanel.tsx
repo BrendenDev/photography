@@ -16,6 +16,95 @@ function camelToTitle(str: string): string {
     .replace(/\bGps\b/g, 'GPS');
 }
 
+/**
+ * Parse a wide variety of date formats into YYYY-MM-DD.
+ * Handles: 09-2-3002, 2/23/4245, Jan 5th 2014, March 2024, 2024-01-15, etc.
+ */
+function parseFlexibleDate(input: string): string {
+  if (!input?.trim()) return '';
+  const s = input.trim();
+
+  // Already ISO format
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+
+  // Try native Date parsing for common formats
+  // Remove ordinal suffixes (1st, 2nd, 3rd, 4th, etc.)
+  const cleaned = s.replace(/(\d+)(st|nd|rd|th)/gi, '$1');
+
+  // Month name patterns: "Jan 5, 2014" / "January 5 2014" / "5 Jan 2014" / "March 2024"
+  const monthNames: Record<string, number> = {
+    jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3,
+    apr: 4, april: 4, may: 5, jun: 6, june: 6,
+    jul: 7, july: 7, aug: 8, august: 8, sep: 9, september: 9,
+    oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12,
+  };
+
+  // "Month Day, Year" or "Month Day Year"
+  const mdy = cleaned.match(/^([a-z]+)\s+(\d{1,2}),?\s+(\d{4})$/i);
+  if (mdy) {
+    const m = monthNames[mdy[1].toLowerCase()];
+    if (m) return `${mdy[3]}-${String(m).padStart(2, '0')}-${mdy[2].padStart(2, '0')}`;
+  }
+
+  // "Day Month Year"
+  const dmy = cleaned.match(/^(\d{1,2})\s+([a-z]+),?\s+(\d{4})$/i);
+  if (dmy) {
+    const m = monthNames[dmy[2].toLowerCase()];
+    if (m) return `${dmy[3]}-${String(m).padStart(2, '0')}-${dmy[1].padStart(2, '0')}`;
+  }
+
+  // "Month Year" (no day)
+  const my = cleaned.match(/^([a-z]+)\s+(\d{4})$/i);
+  if (my) {
+    const m = monthNames[my[1].toLowerCase()];
+    if (m) return `${my[2]}-${String(m).padStart(2, '0')}-01`;
+  }
+
+  // Numeric: MM/DD/YYYY or MM-DD-YYYY or DD/MM/YYYY
+  const numeric = cleaned.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+  if (numeric) {
+    let [, a, b, year] = numeric;
+    // If first number > 12, it's DD/MM/YYYY
+    const n1 = parseInt(a);
+    let month: string, day: string;
+    if (n1 > 12) { month = b; day = a; }
+    else { month = a; day = b; }
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+
+  // YYYY/MM/DD
+  const ymd = cleaned.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+  if (ymd) {
+    return `${ymd[1]}-${ymd[2].padStart(2, '0')}-${ymd[3].padStart(2, '0')}`;
+  }
+
+  // Fallback: try native parser
+  const d = new Date(cleaned);
+  if (!isNaN(d.getTime()) && d.getFullYear() > 1800) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  // Can't parse — return original
+  return s;
+}
+
+const DateInput = ({ label, value, onChange }: { label: string; value: unknown; onChange: (v: string) => void }) => (
+  <div className="mb-4">
+    <label className="block mb-1 text-sm font-medium capitalize" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
+    <input
+      type="text"
+      className="admin-input w-full"
+      value={value as string || ''}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={(e) => {
+        const formatted = parseFlexibleDate(e.target.value);
+        if (formatted !== e.target.value) onChange(formatted);
+      }}
+      placeholder="e.g. Jan 5, 2014 or 2024-01-15"
+    />
+  </div>
+);
+
 const TextInput = ({ label, value, onChange, disabled = false, placeholder = '' }: any) => (
   <div className="mb-4">
     <label className="block mb-1 text-sm font-medium capitalize" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
@@ -87,8 +176,8 @@ function renderCollectionForm(
         availableTags={availableTags}
         onChange={(tags) => set('tags', tags)}
       />
-      <TextInput label="dateRange.from" value={(form.dateRange as Record<string, string>)?.from} onChange={(v: string) => setNested('dateRange', 'from', v)} />
-      <TextInput label="dateRange.to" value={(form.dateRange as Record<string, string>)?.to} onChange={(v: string) => setNested('dateRange', 'to', v)} />
+      <DateInput label="dateRange.from" value={(form.dateRange as Record<string, string>)?.from} onChange={(v: string) => setNested('dateRange', 'from', v)} />
+      <DateInput label="dateRange.to" value={(form.dateRange as Record<string, string>)?.to} onChange={(v: string) => setNested('dateRange', 'to', v)} />
       <TextInput label="location" value={form.location} onChange={(v: string) => set('location', v)} />
       <CheckboxInput label="featured" checked={form.featured} onChange={(v: boolean) => set('featured', v)} />
       <CheckboxInput label="visible" checked={form.visible} onChange={(v: boolean) => set('visible', v)} />
@@ -115,7 +204,7 @@ function renderPhotoForm(
         availableTags={availableTags}
         onChange={(tags) => set('tags', tags)}
       />
-      <TextInput label="dateTaken" value={form.dateTaken} onChange={(v: string) => set('dateTaken', v)} />
+      <DateInput label="dateTaken" value={form.dateTaken} onChange={(v: string) => set('dateTaken', v)} />
       <TextInput label="location" value={form.location} onChange={(v: string) => set('location', v)} />
       <TextInput label="altText" value={form.altText} onChange={(v: string) => set('altText', v)} />
       <ReadOnlyField label="orientation" value={form.orientation} />

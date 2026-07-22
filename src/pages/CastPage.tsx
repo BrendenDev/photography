@@ -14,6 +14,7 @@ export default function CastPage() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isCasting, setIsCasting] = useState(false);
   const [openCollection, setOpenCollection] = useState<Collection | null>(null);
+  const [startAtEnd, setStartAtEnd] = useState(false);
 
   useEffect(() => {
     loadCollections().then(setCollections).catch(console.error);
@@ -45,6 +46,12 @@ export default function CastPage() {
   }, [query, fuse]);
 
   const handleSelect = useCallback((collection: Collection) => {
+    setStartAtEnd(false);
+    setOpenCollection(collection);
+  }, []);
+
+  const handleSwitchCollection = useCallback((collection: Collection, direction: 'next' | 'prev') => {
+    setStartAtEnd(direction === 'prev');
     setOpenCollection(collection);
   }, []);
 
@@ -139,7 +146,16 @@ export default function CastPage() {
       </div>
 
       <AnimatePresence>
-        {openCollection && <OpenBook collection={openCollection} onClose={handleClose} />}
+        {openCollection && (
+          <OpenBook 
+            key={openCollection.slug}
+            collection={openCollection} 
+            onClose={handleClose}
+            allCollections={results.length > 0 ? results : collections}
+            onSwitchCollection={handleSwitchCollection}
+            startAtEnd={startAtEnd}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

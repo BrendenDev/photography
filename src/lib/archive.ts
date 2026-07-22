@@ -14,7 +14,7 @@ export function resolveContentUrl(path: string): string {
 }
 
 export async function loadManifest(): Promise<ArchiveManifest> {
-  const res = await fetch(`${BASE_URL}content/manifest.json`);
+  const res = await fetch(`${BASE_URL}content/manifest.json`, { cache: 'no-cache' });
   if (!res.ok) throw new Error('Failed to load manifest');
   return res.json();
 }
@@ -22,7 +22,7 @@ export async function loadManifest(): Promise<ArchiveManifest> {
 // Load collection slugs dynamically from index.json
 async function getCollectionSlugs(): Promise<string[]> {
   try {
-    const res = await fetch(`${BASE_URL}content/collections/index.json`);
+    const res = await fetch(`${BASE_URL}content/collections/index.json`, { cache: 'no-cache' });
     if (!res.ok) return [];
     const data = await res.json();
     return data.collections || [];
@@ -42,7 +42,7 @@ export async function loadCollections(): Promise<Collection[]> {
 }
 
 export async function loadCollection(slug: string): Promise<Collection> {
-  const res = await fetch(`${BASE_URL}content/collections/${slug}/collection.json`);
+  const res = await fetch(`${BASE_URL}content/collections/${slug}/collection.json`, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`Failed to load collection: ${slug}`);
   return res.json();
 }
@@ -58,7 +58,7 @@ export async function loadPhotos(collectionSlug: string): Promise<Photo[]> {
 }
 
 export async function loadPhoto(collectionSlug: string, photoSlug: string): Promise<Photo> {
-  const res = await fetch(`${BASE_URL}content/collections/${collectionSlug}/photos/${photoSlug}.json`);
+  const res = await fetch(`${BASE_URL}content/collections/${collectionSlug}/photos/${photoSlug}.json`, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`Failed to load photo: ${collectionSlug}/${photoSlug}`);
   const photo: Photo = await res.json();
   
