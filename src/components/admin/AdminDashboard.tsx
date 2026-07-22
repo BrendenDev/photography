@@ -244,15 +244,54 @@ export default function AdminDashboard() {
     selectCollection(slug);
   };
 
-  const handleDeleteCollection = (slug: string) => {
-    if (!confirm(`Are you sure you want to delete collection ${slug}?`)) return;
+  const handleDeleteCollection = async (slug: string) => {
+    if (!confirm(`Are you sure you want to delete collection "${slug}" and all its photos? This cannot be undone after publishing.`)) return;
+    
+    if (!token) return;
+    setStatusMessage(`Preparing to delete collection ${slug}...`);
+    
     const newChanges = new Map(pendingChanges);
     
-    setStatusMessage('Warning: Full deletion of remote directories not fully implemented here. Deleting from index.');
-    
-    setPendingChanges(newChanges);
-    setCollections(collections.filter(c => c.slug !== slug));
-    setSelectedCollection(null);
+    // Recursively list all files in the collection directory
+    const listRecursive = async (path: string): Promise<{ path: string; sha: string }[]> => {
+      const entries = await listDirectory(token, path);
+      const files: { path: string; sha: string }[] = [];
+      for (const entry of entries) {
+        if (entry.type === 'dir') {
+          files.push(...await listRecursive(entry.path));
+        } else {
+          files.push({ path: entry.path, sha: entry.sha });
+        }
+      }
+      return files;
+    };
+
+    try {
+      const allFiles = await listRecursive(`public/content/collections/${slug}`);
+      
+      for (const file of allFiles) {
+        newChanges.set(file.path, {
+          path: file.path,
+          content: '',
+          encoding: 'utf-8',
+          action: 'delete',
+          sha: file.sha
+        });
+      }
+
+      // Remove from collection index
+      setCollectionIndex(prev => prev.filter(s => s !== slug));
+      
+      setPendingChanges(newChanges);
+      setCollections(collections.filter(c => c.slug !== slug));
+      setSelectedCollection(null);
+      setSelectedPhoto(null);
+      setPhotos([]);
+      setStatusMessage(`Collection "${slug}" queued for deletion (${allFiles.length} files). Publish to apply.`);
+    } catch (e) {
+      console.error(e);
+      setStatusMessage(`Failed to prepare deletion for ${slug}`);
+    }
   };
 
   const handleAddPhotos = async (files: FileList) => {
@@ -417,12 +456,16 @@ export default function AdminDashboard() {
         });
       }
 
-      // Auto-update collections index.json if new collections were created
+      // Auto-update collections index.json for creates and deletes
       const updatedIndex = new Set(collectionIndex);
       for (const change of changesArr) {
         const match = change.path.match(/^public\/content\/collections\/([^/]+)\/collection\.json$/);
-        if (match && change.action !== 'delete') {
-          updatedIndex.add(match[1]);
+        if (match) {
+          if (change.action === 'delete') {
+            updatedIndex.delete(match[1]);
+          } else {
+            updatedIndex.add(match[1]);
+          }
         }
       }
       const sortedIndex = [...updatedIndex].sort();
