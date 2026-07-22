@@ -1,38 +1,34 @@
 {
-  "filename": "steel-canyon.jpg",
-  "slug": "steel-canyon",
-  "title": "Chasm of Glass and Steel",
-  "caption": "Looking straight up into the towering geometry of financial district skyscrapers.",
-  "story": "Looking skyward from the foot of Wall Street creates a narrow slice of sky enclosed by towering monoliths of steel and glass. Geometric symmetry meets harsh industrial scale.",
-  "curatorNote": "Bold vertical leading lines. Excellent monochrome conversion candidate.",
-  "tags": [
-    "architecture",
-    "skyscrapers",
-    "geometry",
-    "steel",
-    "bold"
-  ],
-  "mood": "bold",
-  "dateTaken": "2024-11-20T14:15:30Z",
-  "location": "Lower Manhattan, New York",
-  "camera": {
-    "body": "Nikon Z9",
-    "lens": "NIKKOR Z 14-24mm f/2.8 S"
-  },
-  "exposure": {
-    "iso": 64,
-    "shutterSpeed": "1/500s",
-    "aperture": "f/8.0",
-    "focalLength": "14mm"
-  },
-  "orientation": "portrait",
-  "dimensions": {
-    "width": 5504,
-    "height": 8256
-  },
-  "altText": "Low angle view of massive glass skyscrapers reaching into the sky forming a canyon effect.",
-  "variants": {
-    "thumb": "content/collections/urban-alchemy/images/steel-canyon-thumb.webp",
-    "lg": "content/collections/urban-alchemy/images/steel-canyon-lg.webp"
-  }
+    "slug":  "steel-canyon",
+    "title":  "Chasm of Glass and Steel",
+    "caption":  "Looking straight up into the towering geometry of financial district skyscrapers.",
+    "story":  "Looking skyward from the foot of Wall Street creates a narrow slice of sky enclosed by towering monoliths of steel and glass. Geometric symmetry meets harsh industrial scale.",
+    "curatorNote":  "Bold vertical leading lines. Excellent monochrome conversion candidate.",
+    "tags":  [
+                 "architecture",
+                 "skyscrapers",
+                 "geometry",
+                 "steel",
+                 "bold"
+             ],
+    "dateTaken":  "2024-11-20T14:15:30Z",
+    "location":  "Lower Manhattan, New York",
+    "orientation":  "portrait",
+    "dimensions":  {
+                       "width":  5504,
+                       "height":  8256
+                   },
+    "altText":  "Low angle view of massive glass skyscrapers reaching into the sky forming a canyon effect.",
+    "variants":  {
+                     "thumb":  "content/collections/urban-alchemy/images/steel-canyon-thumb.webp",
+                     "lg":  "content/collections/urban-alchemy/images/steel-canyon-lg.webp"
+                 },
+    "metadata":  {
+                     "aperture":  "f/8.0",
+                     "shutterSpeed":  "1/500s",
+                     "lens":  "NIKKOR Z 14-24mm f/2.8 S",
+                     "iso":  64,
+                     "camera":  "Nikon Z9",
+                     "focalLength":  "14mm"
+                 }
 }

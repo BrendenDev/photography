@@ -1,38 +1,34 @@
 {
-  "filename": "golden-hour-skyline.jpg",
-  "slug": "golden-hour-skyline",
-  "title": "Alchemical Sunset over the Hudson",
-  "caption": "The setting sun igniting glass tower facades into sheets of liquid amber.",
-  "story": "During winter solstice twilight, the low sun hits the glass facades of Midtown at an exact 45-degree angle, transforming concrete structures into glowing ingots of amber light.",
-  "curatorNote": "Warm golden tones complement the dark magical library aesthetic nicely.",
-  "tags": [
-    "skyline",
-    "sunset",
-    "golden-hour",
-    "architecture",
-    "dramatic"
-  ],
-  "mood": "dramatic",
-  "dateTaken": "2025-02-14T17:22:10Z",
-  "location": "Hudson River Park, New York",
-  "camera": {
-    "body": "Sony A7 IV",
-    "lens": "FE 70-200mm f/2.8 GM OSS II"
-  },
-  "exposure": {
-    "iso": 100,
-    "shutterSpeed": "1/400s",
-    "aperture": "f/5.6",
-    "focalLength": "105mm"
-  },
-  "orientation": "landscape",
-  "dimensions": {
-    "width": 7008,
-    "height": 4672
-  },
-  "altText": "City skyline reflecting warm golden sunset light across water.",
-  "variants": {
-    "thumb": "content/collections/urban-alchemy/images/golden-hour-skyline-thumb.webp",
-    "lg": "content/collections/urban-alchemy/images/golden-hour-skyline-lg.webp"
-  }
+    "slug":  "golden-hour-skyline",
+    "title":  "Alchemical Sunset over the Hudson",
+    "caption":  "The setting sun igniting glass tower facades into sheets of liquid amber.",
+    "story":  "During winter solstice twilight, the low sun hits the glass facades of Midtown at an exact 45-degree angle, transforming concrete structures into glowing ingots of amber light.",
+    "curatorNote":  "Warm golden tones complement the dark magical library aesthetic nicely.",
+    "tags":  [
+                 "skyline",
+                 "sunset",
+                 "golden-hour",
+                 "architecture",
+                 "dramatic"
+             ],
+    "dateTaken":  "2025-02-14T17:22:10Z",
+    "location":  "Hudson River Park, New York",
+    "orientation":  "landscape",
+    "dimensions":  {
+                       "width":  7008,
+                       "height":  4672
+                   },
+    "altText":  "City skyline reflecting warm golden sunset light across water.",
+    "variants":  {
+                     "thumb":  "content/collections/urban-alchemy/images/golden-hour-skyline-thumb.webp",
+                     "lg":  "content/collections/urban-alchemy/images/golden-hour-skyline-lg.webp"
+                 },
+    "metadata":  {
+                     "aperture":  "f/5.6",
+                     "shutterSpeed":  "1/400s",
+                     "lens":  "FE 70-200mm f/2.8 GM OSS II",
+                     "iso":  100,
+                     "camera":  "Sony A7 IV",
+                     "focalLength":  "105mm"
+                 }
 }

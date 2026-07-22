@@ -44,7 +44,7 @@ export default function HomePage() {
 
   // Fuzzy search
   const fuse = useMemo(() => new Fuse(collections, {
-    keys: ['title', 'description', 'tags', 'location', 'mood', 'story'],
+    keys: ['title', 'description', 'tags', 'location', 'story'],
     threshold: 0.4,
   }), [collections]);
 

@@ -5,22 +5,6 @@
  */
 
 /**
- * Mood affinities available across the archive.
- * Represents the emotional throughline or aesthetic atmosphere of collections and photos.
- */
-export type Mood =
-  | 'ethereal'
-  | 'bold'
-  | 'serene'
-  | 'dramatic'
-  | 'intimate'
-  | 'mysterious'
-  | 'vibrant'
-  | 'melancholic'
-  | 'whimsical'
-  | 'raw';
-
-/**
  * Image orientation classification.
  */
 export type Orientation = 'landscape' | 'portrait' | 'square';
@@ -34,44 +18,11 @@ export interface Dimensions {
 }
 
 /**
- * Camera hardware information.
- */
-export interface CameraMetadata {
-  body: string;
-  lens: string;
-}
-
-/**
- * Photographic exposure parameters.
- */
-export interface ExposureMetadata {
-  iso: number;
-  shutterSpeed: string;
-  aperture: string;
-  focalLength: string;
-}
-
-/**
  * Geographic GPS coordinates.
  */
 export interface GPSLocation {
   lat: number;
   lng: number;
-}
-
-/**
- * Raw technical metadata extracted from photo EXIF data.
- */
-export interface TechnicalMetadata {
-  camera: string;
-  lens: string;
-  iso: number;
-  shutterSpeed: string;
-  aperture: string;
-  focalLength: string;
-  timestamp: string; // ISO date string
-  gps: GPSLocation | null;
-  dimensions: Dimensions;
 }
 
 /**
@@ -86,46 +37,45 @@ export interface ImageVariants {
  * Date range span for a collection.
  */
 export interface DateRange {
-  from: string; // ISO date string e.g. "2024-05-01T00:00:00Z"
-  to: string;   // ISO date string e.g. "2024-10-15T00:00:00Z"
+  from: string;
+  to: string;
 }
 
 /**
  * A preserved photograph entry within the Archive.
+ * 
+ * User-facing fields are rigid. Camera/technical data lives in `metadata`
+ * as a flexible key-value store to accommodate different cameras and formats.
  */
 export interface Photo {
-  filename: string;
   slug: string;
   title: string;
-  caption: string;
-  story: string;
-  curatorNote: string;
-  tags: string[];
-  mood: Mood;
-  dateTaken: string; // ISO date string
-  location: string;
-  camera: CameraMetadata;
-  exposure: ExposureMetadata;
+  caption?: string;
+  story?: string;
+  curatorNote?: string;
+  tags?: string[];
+  dateTaken?: string;
+  location?: string;
   orientation: Orientation;
   dimensions: Dimensions;
-  altText: string;
+  altText?: string;
   variants: ImageVariants;
+  /** Flexible camera/technical metadata — stores whatever EXIF the camera provides */
+  metadata?: Record<string, unknown>;
 }
 
 /**
- * A curated volume / grimoire containing a thematic set of photos.
+ * A curated volume containing a thematic set of photos.
  */
 export interface Collection {
   title: string;
   slug: string;
   volumeNumber: number;
-  coverImage: string | ImageVariants;
-  description: string;
-  story: string;
-  tags: string[];
-  mood: Mood;
-  dateRange: DateRange;
-  location: string;
+  description?: string;
+  story?: string;
+  tags?: string[];
+  dateRange?: DateRange;
+  location?: string;
   featured: boolean;
   visible: boolean;
   photoOrder: string[];
@@ -136,7 +86,7 @@ export interface Collection {
  */
 export interface ArchiveManifest {
   version: string;
-  lastGenerated: string; // ISO date string
+  lastGenerated: string;
   collectionCount: number;
   photoCount: number;
   checksum: string;

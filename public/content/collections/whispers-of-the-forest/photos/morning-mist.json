@@ -1,37 +1,33 @@
 {
-  "filename": "morning-mist.jpg",
-  "slug": "morning-mist",
-  "title": "Morning Mist over the Basin",
-  "caption": "Thick fog rolling across the fern floor at dawn.",
-  "story": "I arrived at the ridge before first light. As the sun breached the eastern peaks, rays pierced the heavy vapor, illuminating droplets suspended on ancient cedar needles.",
-  "curatorNote": "Prints remarkably well on matte parchment paper. Outstanding atmospheric depth.",
-  "tags": [
-    "mist",
-    "dawn",
-    "forest",
-    "ethereal"
-  ],
-  "mood": "ethereal",
-  "dateTaken": "2024-04-12T06:45:12Z",
-  "location": "Hoh Rain Forest, Washington",
-  "camera": {
-    "body": "Canon EOS R5",
-    "lens": "RF 24-70mm f/2.8L IS USM"
-  },
-  "exposure": {
-    "iso": 100,
-    "shutterSpeed": "1/125s",
-    "aperture": "f/4.0",
-    "focalLength": "35mm"
-  },
-  "orientation": "landscape",
-  "dimensions": {
-    "width": 8192,
-    "height": 5464
-  },
-  "altText": "Morning fog drifting low between tall evergreen trees in a lush rainforest.",
-  "variants": {
-    "thumb": "content/collections/whispers-of-the-forest/images/morning-mist-thumb.webp",
-    "lg": "content/collections/whispers-of-the-forest/images/morning-mist-lg.webp"
-  }
+    "slug":  "morning-mist",
+    "title":  "Morning Mist over the Basin",
+    "caption":  "Thick fog rolling across the fern floor at dawn.",
+    "story":  "I arrived at the ridge before first light. As the sun breached the eastern peaks, rays pierced the heavy vapor, illuminating droplets suspended on ancient cedar needles.",
+    "curatorNote":  "Prints remarkably well on matte parchment paper. Outstanding atmospheric depth.",
+    "tags":  [
+                 "mist",
+                 "dawn",
+                 "forest",
+                 "ethereal"
+             ],
+    "dateTaken":  "2024-04-12T06:45:12Z",
+    "location":  "Hoh Rain Forest, Washington",
+    "orientation":  "landscape",
+    "dimensions":  {
+                       "width":  8192,
+                       "height":  5464
+                   },
+    "altText":  "Morning fog drifting low between tall evergreen trees in a lush rainforest.",
+    "variants":  {
+                     "thumb":  "content/collections/whispers-of-the-forest/images/morning-mist-thumb.webp",
+                     "lg":  "content/collections/whispers-of-the-forest/images/morning-mist-lg.webp"
+                 },
+    "metadata":  {
+                     "aperture":  "f/4.0",
+                     "shutterSpeed":  "1/125s",
+                     "lens":  "RF 24-70mm f/2.8L IS USM",
+                     "iso":  100,
+                     "camera":  "Canon EOS R5",
+                     "focalLength":  "35mm"
+                 }
 }

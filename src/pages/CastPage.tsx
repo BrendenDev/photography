@@ -20,7 +20,7 @@ export default function CastPage() {
   }, []);
 
   const fuse = useMemo(() => new Fuse(collections, {
-    keys: ['title', 'description', 'story', 'tags', 'location', 'mood'],
+    keys: ['title', 'description', 'story', 'tags', 'location'],
     threshold: 0.4,
     includeScore: true,
   }), [collections]);

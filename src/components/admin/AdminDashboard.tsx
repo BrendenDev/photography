@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { listDirectory, readJsonFile, batchCommit, blobToBase64, type PendingChange } from '../../lib/github';
-import { generateVariants, extractExif } from '../../lib/imageProcessor';
+import { generateVariants, extractMetadata } from '../../lib/imageProcessor';
 import CollectionSidebar, { type CollectionItem } from './CollectionSidebar';
 import PhotoGrid, { type PhotoItem } from './PhotoGrid';
 import PropertiesPanel from './PropertiesPanel';
@@ -18,6 +18,19 @@ export default function AdminDashboard() {
   const [pendingChanges, setPendingChanges] = useState<Map<string, PendingChange>>(new Map());
   const [isPublishing, setIsPublishing] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Initializing...');
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [tagsFileSha, setTagsFileSha] = useState<string | undefined>();
+
+  const loadTags = async () => {
+    if (!token) return;
+    try {
+      const { data, sha } = await readJsonFile<string[]>(token, 'public/content/tags.json');
+      setAvailableTags(data);
+      setTagsFileSha(sha);
+    } catch {
+      setAvailableTags([]);
+    }
+  };
 
   const loadCollections = async () => {
     if (!token) return;
@@ -50,6 +63,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     loadCollections();
+    loadTags();
   }, [token]);
 
   const selectCollection = async (slug: string) => {
@@ -156,11 +170,12 @@ export default function AdminDashboard() {
     const slug = prompt('Enter new collection slug (e.g. nature, portraits):');
     if (!slug) return;
     
-    // Create basic JSON
     const newCollJson = {
       title: slug,
-      description: '',
-      photoCount: 0,
+      slug: slug,
+      volumeNumber: 1,
+      featured: false,
+      visible: true,
       photoOrder: []
     };
     
@@ -220,25 +235,22 @@ export default function AdminDashboard() {
       const photoSlug = `${nameWithoutExt}-${Date.now().toString().slice(-4)}`;
       
       const variants = await generateVariants(file);
-      const exif = await extractExif(file);
-      
       const thumbBase64 = await blobToBase64(variants.thumb);
       const lgBase64 = await blobToBase64(variants.lg);
       
+      const metadata = await extractMetadata(file);
       const pJson: Record<string, unknown> = {
         title: file.name.split('.')[0],
         slug: photoSlug,
-        dateAdded: new Date().toISOString(),
         orientation: variants.orientation,
         dimensions: variants.dimensions,
         variants: {
           thumb: `content/collections/${selectedCollection.slug}/images/${photoSlug}-thumb.webp`,
           lg: `content/collections/${selectedCollection.slug}/images/${photoSlug}-lg.webp`
         },
-        ...(exif.camera ? { camera: exif.camera } : {}),
-        ...(exif.exposure ? { exposure: exif.exposure } : {}),
-        ...(exif.dateTaken ? { dateTaken: exif.dateTaken } : {}),
-        ...(exif.location ? { location: exif.location } : {})
+        ...(metadata.dateTaken ? { dateTaken: metadata.dateTaken as string } : {}),
+        ...(metadata.gps ? { location: metadata.gps as string } : {}),
+        ...(Object.keys(metadata).length > 0 ? { metadata } : {})
       };
       
       // Save images
@@ -345,12 +357,39 @@ export default function AdminDashboard() {
     setStatusMessage('Publishing changes...');
     try {
       const changesArr = Array.from(pendingChanges.values());
+
+      // Collect all tags used in pending changes and merge with available
+      const allUsedTags = new Set<string>(availableTags);
+      for (const change of changesArr) {
+        if (change.path.endsWith('.json') && change.action !== 'delete' && change.content) {
+          try {
+            const parsed = JSON.parse(change.content);
+            if (Array.isArray(parsed.tags)) {
+              parsed.tags.forEach((t: string) => allUsedTags.add(t));
+            }
+          } catch { /* not json */ }
+        }
+      }
+
+      // If new tags were added, include tags.json update
+      const sortedTags = [...allUsedTags].sort();
+      if (JSON.stringify(sortedTags) !== JSON.stringify([...availableTags].sort())) {
+        changesArr.push({
+          path: 'public/content/tags.json',
+          content: JSON.stringify(sortedTags, null, 2),
+          encoding: 'utf-8',
+          action: tagsFileSha ? 'update' : 'create',
+          sha: tagsFileSha
+        });
+      }
+
       const message = `archive-${Math.random().toString(36).substring(2, 10)}`;
       await batchCommit(token, changesArr, message);
       setPendingChanges(new Map());
       setStatusMessage('Changes published successfully!');
       setTimeout(() => {
         loadCollections();
+        loadTags();
         setSelectedCollection(null);
         setSelectedPhoto(null);
         setPhotos([]);
@@ -418,8 +457,9 @@ export default function AdminDashboard() {
         {(selectedPhoto || selectedCollection) && (
           <PropertiesPanel
             key={selectedPhoto ? `photo-${selectedPhoto.slug}` : `col-${selectedCollection?.slug}`}
-            title={selectedPhoto ? 'Photo' : 'Collection'}
+            mode={selectedPhoto ? 'photo' : 'collection'}
             json={selectedPhoto ? selectedPhoto.json : selectedCollection!.json}
+            availableTags={availableTags}
             onApply={selectedPhoto ? handleApplyPhotoProperties : handleApplyCollectionProperties}
           />
         )}

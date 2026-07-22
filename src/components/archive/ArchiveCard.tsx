@@ -20,13 +20,9 @@ const ArchiveCard: React.FC<ArchiveCardProps> = ({ collection, className = '' })
       
       <div className="h-48 relative overflow-hidden bg-gradient-to-br from-arcane-deep to-arcane-void">
         {/* Placeholder for Cover */}
-        {collection.coverImage ? (
-          <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url(${typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.lg})` }} />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-50 transition-opacity duration-300">
-             <SigilIcon name="collection" size={64} className="text-arcane-amber" />
-          </div>
-        )}
+        <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-50 transition-opacity duration-300">
+           <SigilIcon name="collection" size={64} className="text-arcane-amber" />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-arcane-void to-transparent opacity-90" />
         
         <div className="absolute top-4 left-4 z-10">

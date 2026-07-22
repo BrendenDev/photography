@@ -2,7 +2,6 @@
   "title": "Urban Alchemy",
   "slug": "urban-alchemy",
   "volumeNumber": 2,
-  "coverImage": "content/collections/urban-alchemy/images/cover-lg.webp",
   "description": "A stark and luminous study of metallic structures, neon reflections, and midnight cityscapes.",
   "story": "Cities are alchemy in stone and glass — turning light, steel, and human rhythm into a nocturnal symphony. These frames capture the vivid pulse when darkness settles over high-rises.",
   "tags": [
@@ -11,7 +10,6 @@
     "night",
     "neon"
   ],
-  "mood": "bold",
   "dateRange": {
     "from": "2024-10-01T20:00:00Z",
     "to": "2025-02-14T23:59:00Z"

@@ -1,38 +1,34 @@
 {
-  "filename": "neon-reflections.jpg",
-  "slug": "neon-reflections",
-  "title": "Prismatic Rain",
-  "caption": "Vivid neon signage mirrored in rain-soaked asphalt after a midnight downpour.",
-  "story": "Rain in Shinjuku turns asphalt into a liquid canvas. Standing beneath the overhang of a closed alley bar, the reflection of blue and magenta signs created an abstract grid of liquid light.",
-  "curatorNote": "Vibrant color palette. High contrast neon glow makes this a top candidate for volume cover.",
-  "tags": [
-    "neon",
-    "reflection",
-    "rain",
-    "night",
-    "vibrant"
-  ],
-  "mood": "vibrant",
-  "dateTaken": "2024-10-15T22:45:00Z",
-  "location": "Shinjuku, Tokyo, Japan",
-  "camera": {
-    "body": "Sony A7S III",
-    "lens": "FE 35mm f/1.4 GM"
-  },
-  "exposure": {
-    "iso": 1600,
-    "shutterSpeed": "1/160s",
-    "aperture": "f/1.4",
-    "focalLength": "35mm"
-  },
-  "orientation": "portrait",
-  "dimensions": {
-    "width": 4240,
-    "height": 6360
-  },
-  "altText": "Rain wet city pavement reflecting bright pink and cyan neon lights at night.",
-  "variants": {
-    "thumb": "content/collections/urban-alchemy/images/neon-reflections-thumb.webp",
-    "lg": "content/collections/urban-alchemy/images/neon-reflections-lg.webp"
-  }
+    "slug":  "neon-reflections",
+    "title":  "Prismatic Rain",
+    "caption":  "Vivid neon signage mirrored in rain-soaked asphalt after a midnight downpour.",
+    "story":  "Rain in Shinjuku turns asphalt into a liquid canvas. Standing beneath the overhang of a closed alley bar, the reflection of blue and magenta signs created an abstract grid of liquid light.",
+    "curatorNote":  "Vibrant color palette. High contrast neon glow makes this a top candidate for volume cover.",
+    "tags":  [
+                 "neon",
+                 "reflection",
+                 "rain",
+                 "night",
+                 "vibrant"
+             ],
+    "dateTaken":  "2024-10-15T22:45:00Z",
+    "location":  "Shinjuku, Tokyo, Japan",
+    "orientation":  "portrait",
+    "dimensions":  {
+                       "width":  4240,
+                       "height":  6360
+                   },
+    "altText":  "Rain wet city pavement reflecting bright pink and cyan neon lights at night.",
+    "variants":  {
+                     "thumb":  "content/collections/urban-alchemy/images/neon-reflections-thumb.webp",
+                     "lg":  "content/collections/urban-alchemy/images/neon-reflections-lg.webp"
+                 },
+    "metadata":  {
+                     "aperture":  "f/1.4",
+                     "shutterSpeed":  "1/160s",
+                     "lens":  "FE 35mm f/1.4 GM",
+                     "iso":  1600,
+                     "camera":  "Sony A7S III",
+                     "focalLength":  "35mm"
+                 }
 }

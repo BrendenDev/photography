@@ -48,6 +48,13 @@ export default function PhotoGrid({ photos, selectedSlug, collectionSlug, onSele
     setDraggedIdx(null);
   };
 
+  const movePhoto = (fromIndex: number, toIndex: number) => {
+    const newOrder = photos.map(p => p.slug);
+    const [moved] = newOrder.splice(fromIndex, 1);
+    newOrder.splice(toIndex, 0, moved);
+    onReorder(newOrder);
+  };
+
   return (
     <div className="flex-1 flex flex-col admin-panel border-r border-t-0 border-b-0 border-l-0 overflow-hidden">
       <div className="p-4 border-b flex justify-between items-center" style={{borderColor: 'var(--admin-border)'}}>
@@ -95,6 +102,29 @@ export default function PhotoGrid({ photos, selectedSlug, collectionSlug, onSele
                 {p.isPending && (
                   <div className="absolute top-1 right-1 bg-blue-600 text-white text-[10px] px-1 rounded">New</div>
                 )}
+                <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-2 w-full flex justify-between items-end">
+                  <span className="text-xs text-white truncate flex-1">{p.title}</span>
+                  <div className="flex items-center gap-1 ml-2">
+                    {idx > 0 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); movePhoto(idx, idx - 1); }}
+                        className="text-white/70 hover:text-white text-xs px-1"
+                        title="Move up"
+                      >↑</button>
+                    )}
+                    {idx < photos.length - 1 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); movePhoto(idx, idx + 1); }}
+                        className="text-white/70 hover:text-white text-xs px-1"
+                        title="Move down"
+                      >↓</button>
+                    )}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onDeletePhoto(p.slug); }}
+                      className="text-red-400 hover:text-red-300 text-xs px-1"
+                    >✕</button>
+                  </div>
+                </div>
               </div>
             );
           })}

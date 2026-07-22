@@ -7,13 +7,6 @@ export interface ImageVariantResult {
   orientation: 'landscape' | 'portrait' | 'square';
 }
 
-export interface ExifData {
-  camera?: { body?: string; lens?: string };
-  exposure?: { iso?: number; shutterSpeed?: string; aperture?: string; focalLength?: string };
-  dateTaken?: string;
-  location?: string;
-}
-
 async function resizeImage(bitmap: ImageBitmap, maxDim: number, quality: number): Promise<Blob> {
   let width = bitmap.width;
   let height = bitmap.height;
@@ -40,7 +33,7 @@ export async function generateVariants(file: File): Promise<ImageVariantResult> 
   const bitmap = await createImageBitmap(file);
   const width = bitmap.width;
   const height = bitmap.height;
-  
+
   let orientation: 'landscape' | 'portrait' | 'square' = 'square';
   if (width > height) orientation = 'landscape';
   else if (height > width) orientation = 'portrait';
@@ -48,59 +41,68 @@ export async function generateVariants(file: File): Promise<ImageVariantResult> 
   const thumb = await resizeImage(bitmap, 400, 0.75);
   const lg = await resizeImage(bitmap, 2400, 0.90);
 
-  return {
-    thumb,
-    lg,
-    dimensions: { width, height },
-    orientation
-  };
+  return { thumb, lg, dimensions: { width, height }, orientation };
 }
 
-function formatShutterSpeed(time: number): string {
-  if (time >= 1) return `${time}s`;
-  return `1/${Math.round(1 / time)}`;
-}
-
-export async function extractExif(file: File): Promise<ExifData> {
+/**
+ * Extract ALL available EXIF metadata from a photo file.
+ * Returns a flat key-value object — different cameras produce different fields,
+ * and we capture whatever is available.
+ */
+export async function extractMetadata(file: File): Promise<Record<string, unknown>> {
   try {
     const data = await exifr.parse(file, {
       tiff: true,
       exif: true,
-      gps: true
+      gps: true,
     });
-    
+
     if (!data) return {};
 
-    const exifData: ExifData = {};
-    
+    const metadata: Record<string, unknown> = {};
+
+    // Camera info
+    if (data.Make) metadata.cameraMake = data.Make;
+    if (data.Model) metadata.cameraModel = data.Model;
     if (data.Make || data.Model) {
-      exifData.camera = {
-        body: [data.Make, data.Model].filter(Boolean).join(' ')
-      };
-      if (data.LensModel) {
-        exifData.camera.lens = data.LensModel;
-      }
+      metadata.camera = [data.Make, data.Model].filter(Boolean).join(' ');
     }
+    if (data.LensModel) metadata.lens = data.LensModel;
 
-    if (data.ISO || data.ExposureTime || data.FNumber || data.FocalLength) {
-      exifData.exposure = {};
-      if (data.ISO) exifData.exposure.iso = data.ISO;
-      if (data.ExposureTime) exifData.exposure.shutterSpeed = formatShutterSpeed(data.ExposureTime);
-      if (data.FNumber) exifData.exposure.aperture = `f/${data.FNumber}`;
-      if (data.FocalLength) exifData.exposure.focalLength = `${data.FocalLength}mm`;
+    // Exposure info
+    if (data.ISO) metadata.iso = data.ISO;
+    if (data.ExposureTime) {
+      metadata.shutterSpeed = data.ExposureTime >= 1
+        ? `${data.ExposureTime}s`
+        : `1/${Math.round(1 / data.ExposureTime)}`;
     }
+    if (data.FNumber) metadata.aperture = `f/${data.FNumber}`;
+    if (data.FocalLength) metadata.focalLength = `${data.FocalLength}mm`;
+    if (data.ExposureCompensation !== undefined) metadata.exposureCompensation = `${data.ExposureCompensation} EV`;
+    if (data.MeteringMode) metadata.meteringMode = data.MeteringMode;
+    if (data.WhiteBalance) metadata.whiteBalance = data.WhiteBalance;
+    if (data.Flash) metadata.flash = data.Flash;
 
+    // Date
     if (data.DateTimeOriginal) {
-      exifData.dateTaken = new Date(data.DateTimeOriginal).toISOString();
+      metadata.dateTaken = data.DateTimeOriginal instanceof Date
+        ? data.DateTimeOriginal.toISOString()
+        : String(data.DateTimeOriginal);
     }
 
+    // GPS
     if (data.latitude && data.longitude) {
-      exifData.location = `${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}`;
+      metadata.gpsLat = data.latitude;
+      metadata.gpsLng = data.longitude;
+      metadata.gps = `${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}`;
     }
 
-    return exifData;
+    // Software
+    if (data.Software) metadata.software = data.Software;
+
+    return metadata;
   } catch (e) {
-    console.error('Failed to parse EXIF:', e);
+    console.warn('EXIF extraction failed:', e);
     return {};
   }
 }

@@ -1,38 +1,34 @@
 {
-  "filename": "dappled-light.jpg",
-  "slug": "dappled-light",
-  "title": "Sunbeams through the Canopy",
-  "caption": "Golden light filtering through cedar branches into a quiet clearing.",
-  "story": "For just ten minutes before afternoon clouds rolled over the ridge, sunlight filtered through the pine needles, creating brilliant golden shafts against the shadowed understory.",
-  "curatorNote": "Beautiful light rays (god rays). Ideal candidate for gallery hero background or thumbnail.",
-  "tags": [
-    "sunlight",
-    "beams",
-    "canopy",
-    "forest",
-    "ethereal"
-  ],
-  "mood": "ethereal",
-  "dateTaken": "2024-09-28T16:30:22Z",
-  "location": "Mount Rainier National Park, Washington",
-  "camera": {
-    "body": "Fujifilm GFX 100 II",
-    "lens": "GF 32-64mm f/4 R LM WR"
-  },
-  "exposure": {
-    "iso": 160,
-    "shutterSpeed": "1/250s",
-    "aperture": "f/8.0",
-    "focalLength": "45mm"
-  },
-  "orientation": "landscape",
-  "dimensions": {
-    "width": 11648,
-    "height": 8736
-  },
-  "altText": "Golden shafts of sunlight streaming through dense forest trees down onto green ferns.",
-  "variants": {
-    "thumb": "content/collections/whispers-of-the-forest/images/dappled-light-thumb.webp",
-    "lg": "content/collections/whispers-of-the-forest/images/dappled-light-lg.webp"
-  }
+    "slug":  "dappled-light",
+    "title":  "Sunbeams through the Canopy",
+    "caption":  "Golden light filtering through cedar branches into a quiet clearing.",
+    "story":  "For just ten minutes before afternoon clouds rolled over the ridge, sunlight filtered through the pine needles, creating brilliant golden shafts against the shadowed understory.",
+    "curatorNote":  "Beautiful light rays (god rays). Ideal candidate for gallery hero background or thumbnail.",
+    "tags":  [
+                 "sunlight",
+                 "beams",
+                 "canopy",
+                 "forest",
+                 "ethereal"
+             ],
+    "dateTaken":  "2024-09-28T16:30:22Z",
+    "location":  "Mount Rainier National Park, Washington",
+    "orientation":  "landscape",
+    "dimensions":  {
+                       "width":  11648,
+                       "height":  8736
+                   },
+    "altText":  "Golden shafts of sunlight streaming through dense forest trees down onto green ferns.",
+    "variants":  {
+                     "thumb":  "content/collections/whispers-of-the-forest/images/dappled-light-thumb.webp",
+                     "lg":  "content/collections/whispers-of-the-forest/images/dappled-light-lg.webp"
+                 },
+    "metadata":  {
+                     "aperture":  "f/8.0",
+                     "shutterSpeed":  "1/250s",
+                     "lens":  "GF 32-64mm f/4 R LM WR",
+                     "iso":  160,
+                     "camera":  "Fujifilm GFX 100 II",
+                     "focalLength":  "45mm"
+                 }
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams } from 'react-router-dom';
 import type { Collection, Photo } from '../../types/archive';
-import { loadPhotos, resolveContentUrl } from '../../lib/archive';
+import { loadPhotos } from '../../lib/archive';
 import SpellCircle from '../arcane/SpellCircle';
 import ProgressiveImage from '../ui/ProgressiveImage';
 
@@ -28,7 +28,6 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
     return isNaN(n) ? -1 : n;
   });
 
-  const mood = getMoodColors(collection.mood);
 
   useEffect(() => {
     loadPhotos(collection.slug)
@@ -86,9 +85,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
   }, []);
 
   const currentPhoto = currentIndex >= 0 && currentIndex < photos.length ? photos[currentIndex] : null;
-  const coverUrl = collection.coverImage
-    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.lg)
-    : '';
+  const coverUrl = '';
 
   // Preload adjacent photos
   useEffect(() => {
@@ -209,15 +206,17 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
                     </h2>
                     
                     <svg viewBox="0 0 120 8" className="w-24 my-4">
-                      <line x1="0" y1="4" x2="48" y2="4" stroke={mood.accent} strokeWidth="0.5" opacity="0.4" />
-                      <circle cx="60" cy="4" r="2.5" fill="none" stroke={mood.accent} strokeWidth="0.7" opacity="0.5" />
-                      <circle cx="60" cy="4" r="1" fill={mood.accent} opacity="0.4" />
-                      <line x1="72" y1="4" x2="120" y2="4" stroke={mood.accent} strokeWidth="0.5" opacity="0.4" />
+                      <line x1="0" y1="4" x2="48" y2="4" stroke="#7eb8da" strokeWidth="0.5" opacity="0.4" />
+                      <circle cx="60" cy="4" r="2.5" fill="none" stroke="#7eb8da" strokeWidth="0.7" opacity="0.5" />
+                      <circle cx="60" cy="4" r="1" fill="#7eb8da" opacity="0.4" />
+                      <line x1="72" y1="4" x2="120" y2="4" stroke="#7eb8da" strokeWidth="0.5" opacity="0.4" />
                     </svg>
                     
-                    <p className="font-body text-sm text-stone-500 max-w-sm leading-relaxed mb-4 italic">
-                      {collection.description}
-                    </p>
+                    {collection.description && (
+                      <p className="font-body text-sm text-stone-500 max-w-sm leading-relaxed mb-4 italic">
+                        {collection.description}
+                      </p>
+                    )}
                     
                     {collection.story && (
                       <p className="font-body text-xs text-stone-400 max-w-sm leading-relaxed mb-6">
@@ -303,9 +302,11 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
                           <div className="w-16 h-px bg-white/20 mx-auto" />
                         </div>
 
-                        <p className="font-body text-sm text-white/80 leading-relaxed italic text-center mb-4">
-                          "{currentPhoto.caption}"
-                        </p>
+                        {currentPhoto.caption && currentPhoto.caption.trim() !== '' && (
+                          <p className="font-body text-sm text-white/80 leading-relaxed italic text-center mb-4">
+                            "{currentPhoto.caption}"
+                          </p>
+                        )}
 
                         {currentPhoto.story && (
                           <p className="font-body text-sm text-white/60 leading-relaxed text-center mb-6">{currentPhoto.story}</p>
@@ -320,20 +321,9 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
                         )}
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-lg mx-auto mt-8 pt-6 border-t border-white/10">
-                          {currentPhoto.camera && (
-                            <>
-                              <InfoBlock label="Camera" value={currentPhoto.camera.body} />
-                              <InfoBlock label="Lens" value={currentPhoto.camera.lens} />
-                            </>
-                          )}
-                          {currentPhoto.exposure && (
-                            <>
-                              <InfoBlock label="Aperture" value={currentPhoto.exposure.aperture} />
-                              <InfoBlock label="Shutter" value={currentPhoto.exposure.shutterSpeed} />
-                              <InfoBlock label="ISO" value={String(currentPhoto.exposure.iso)} />
-                              <InfoBlock label="Focal Length" value={currentPhoto.exposure.focalLength} />
-                            </>
-                          )}
+                          {currentPhoto.metadata && Object.entries(currentPhoto.metadata).map(([key, value]) => (
+                            <InfoBlock key={key} label={camelToTitle(key)} value={String(value)} />
+                          ))}
                           {currentPhoto.location && <InfoBlock label="Location" value={currentPhoto.location} />}
                           {currentPhoto.dateTaken && <InfoBlock label="Date" value={currentPhoto.dateTaken.split('T')[0]} />}
                         </div>
@@ -403,12 +393,11 @@ function InfoBlock({ label, value }: { label: string; value: string }) {
   );
 }
 
-function getMoodColors(mood: string) {
-  const colors: Record<string, { accent: string }> = {
-    ethereal: { accent: '#7eb8da' }, bold: { accent: '#d4776b' }, serene: { accent: '#6ba88c' },
-    dramatic: { accent: '#9b7ec4' }, intimate: { accent: '#c4a67e' }, mysterious: { accent: '#7e9bc4' },
-    vibrant: { accent: '#e8b54d' }, melancholic: { accent: '#8888aa' }, whimsical: { accent: '#c47eb8' },
-    raw: { accent: '#a89b7e' },
-  };
-  return colors[mood] || colors.ethereal;
+
+function camelToTitle(str: string): string {
+  return str
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, s => s.toUpperCase())
+    .replace(/\bIso\b/g, 'ISO')
+    .replace(/\bGps\b/g, 'GPS');
 }

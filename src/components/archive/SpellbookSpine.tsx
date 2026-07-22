@@ -28,7 +28,7 @@ export const moodColors: Record<string, { bg: string; accent: string; glow: stri
 };
 
 const SpellbookSpine = memo(function SpellbookSpine({ collection, onSelect, className = '' }: SpellbookSpineProps) {
-  const mood = moodColors[collection.mood] || moodColors.ethereal;
+  const mood = moodColors['ethereal'];
 
   const handleClick = () => {
     if (onSelect) onSelect(collection);

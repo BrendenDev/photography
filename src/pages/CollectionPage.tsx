@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { loadCollection, loadPhotos, resolveContentUrl } from '../lib/archive';
+import { loadCollection, loadPhotos } from '../lib/archive';
 import type { Collection, Photo } from '../types/archive';
 import PhotoGrid from '../components/archive/PhotoGrid';
 import RuneDivider from '../components/arcane/RuneDivider';
@@ -57,9 +57,7 @@ export default function CollectionPage() {
     );
   }
 
-  const coverUrl = collection.coverImage 
-    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.lg)
-    : '';
+  const coverUrl = '';
 
   return (
     <div className="w-full bg-arcane-void">
