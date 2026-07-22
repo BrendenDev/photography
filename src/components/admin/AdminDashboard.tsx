@@ -19,16 +19,13 @@ export default function AdminDashboard() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Initializing...');
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [tagsFileSha, setTagsFileSha] = useState<string | undefined>();
   const [collectionIndex, setCollectionIndex] = useState<string[]>([]);
-  const [indexFileSha, setIndexFileSha] = useState<string | undefined>();
 
   const loadTags = async () => {
     if (!token) return;
     try {
-      const { data, sha } = await readJsonFile<string[]>(token, 'public/content/tags.json');
+      const { data } = await readJsonFile<string[]>(token, 'public/content/tags.json');
       setAvailableTags(data);
-      setTagsFileSha(sha);
     } catch {
       setAvailableTags([]);
     }
@@ -37,9 +34,8 @@ export default function AdminDashboard() {
   const loadIndex = async () => {
     if (!token) return;
     try {
-      const { data, sha } = await readJsonFile<{ collections: string[] }>(token, 'public/content/collections/index.json');
+      const { data } = await readJsonFile<{ collections: string[] }>(token, 'public/content/collections/index.json');
       setCollectionIndex(data.collections || []);
-      setIndexFileSha(sha);
     } catch {
       setCollectionIndex([]);
     }
@@ -431,8 +427,17 @@ export default function AdminDashboard() {
     try {
       const changesArr = Array.from(pendingChanges.values());
 
-      // Collect all tags used in pending changes and merge with available
-      const allUsedTags = new Set<string>(availableTags);
+      // Collect all tags used in pending changes and merge with remote tags
+      // Always fetch the CURRENT remote tags to avoid stale state issues
+      let remoteTags: string[] = [];
+      let remoteTagsSha: string | undefined;
+      try {
+        const { data, sha } = await readJsonFile<string[]>(token, 'public/content/tags.json');
+        remoteTags = data;
+        remoteTagsSha = sha;
+      } catch { /* tags.json doesn't exist yet */ }
+
+      const allUsedTags = new Set<string>(remoteTags);
       for (const change of changesArr) {
         if (change.path.endsWith('.json') && change.action !== 'delete' && change.content) {
           try {
@@ -446,18 +451,27 @@ export default function AdminDashboard() {
 
       // If new tags were added, include tags.json update
       const sortedTags = [...allUsedTags].sort();
-      if (JSON.stringify(sortedTags) !== JSON.stringify([...availableTags].sort())) {
+      if (JSON.stringify(sortedTags) !== JSON.stringify([...remoteTags].sort())) {
         changesArr.push({
           path: 'public/content/tags.json',
           content: JSON.stringify(sortedTags, null, 2),
           encoding: 'utf-8',
-          action: tagsFileSha ? 'update' : 'create',
-          sha: tagsFileSha
+          action: remoteTagsSha ? 'update' : 'create',
+          sha: remoteTagsSha
         });
       }
 
       // Auto-update collections index.json for creates and deletes
-      const updatedIndex = new Set(collectionIndex);
+      // Always fetch the CURRENT remote index to avoid stale state issues
+      let remoteIndex: string[] = [];
+      let remoteIndexSha: string | undefined;
+      try {
+        const { data, sha } = await readJsonFile<{ collections: string[] }>(token, 'public/content/collections/index.json');
+        remoteIndex = data.collections || [];
+        remoteIndexSha = sha;
+      } catch { /* index.json doesn't exist yet */ }
+
+      const updatedIndex = new Set(remoteIndex);
       for (const change of changesArr) {
         const match = change.path.match(/^public\/content\/collections\/([^/]+)\/collection\.json$/);
         if (match) {
@@ -469,13 +483,13 @@ export default function AdminDashboard() {
         }
       }
       const sortedIndex = [...updatedIndex].sort();
-      if (JSON.stringify(sortedIndex) !== JSON.stringify([...collectionIndex].sort())) {
+      if (JSON.stringify(sortedIndex) !== JSON.stringify([...remoteIndex].sort())) {
         changesArr.push({
           path: 'public/content/collections/index.json',
           content: JSON.stringify({ collections: sortedIndex }, null, 2),
           encoding: 'utf-8',
-          action: indexFileSha ? 'update' : 'create',
-          sha: indexFileSha
+          action: remoteIndexSha ? 'update' : 'create',
+          sha: remoteIndexSha
         });
       }
 
