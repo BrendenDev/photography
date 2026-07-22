@@ -6,6 +6,7 @@ import SpellbookSpine from '../components/archive/SpellbookSpine';
 import OpenBook from '../components/archive/OpenBook';
 import SpellCircle from '../components/arcane/SpellCircle';
 import SearchSpellCircle from '../components/arcane/SearchSpellCircle';
+import ArcaneParticles from '../components/arcane/ArcaneParticles';
 import { loadCollections } from '../lib/archive';
 import type { Collection } from '../types/archive';
 
@@ -111,6 +112,23 @@ export default function HomePage() {
         {/* Ambient light */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at center top, rgba(232,181,77,0.06) 0%, transparent 70%)' }}
+        />
+
+        {/* Floating magic particles */}
+        <ArcaneParticles count={35} />
+
+        {/* Ambient glow orbs — slow pulsing magical light sources */}
+        <div className="absolute top-[15%] left-[10%] w-[300px] h-[300px] pointer-events-none animate-[pulse_8s_ease-in-out_infinite]"
+          style={{ background: 'radial-gradient(circle, rgba(140,100,220,0.045) 0%, transparent 70%)' }}
+        />
+        <div className="absolute top-[45%] right-[8%] w-[250px] h-[250px] pointer-events-none animate-[pulse_10s_ease-in-out_infinite_2s]"
+          style={{ background: 'radial-gradient(circle, rgba(180,140,240,0.035) 0%, transparent 70%)' }}
+        />
+        <div className="absolute bottom-[20%] left-[30%] w-[350px] h-[350px] pointer-events-none animate-[pulse_12s_ease-in-out_infinite_4s]"
+          style={{ background: 'radial-gradient(circle, rgba(100,80,180,0.04) 0%, transparent 70%)' }}
+        />
+        <div className="absolute top-[60%] left-[60%] w-[200px] h-[200px] pointer-events-none animate-[pulse_9s_ease-in-out_infinite_6s]"
+          style={{ background: 'radial-gradient(circle, rgba(232,181,77,0.025) 0%, transparent 70%)' }}
         />
 
         {/* Title plaque + search */}
@@ -302,20 +320,34 @@ function Shelf({ collections, onSelect, label, hasCandle, matchingSlugs }: {
   );
 }
 
-function buildShelfRows(collections: Collection[], targetRows: number) {
+function buildShelfRows(collections: Collection[], _targetRows: number) {
   if (collections.length === 0) return [];
   const rows: { books: Collection[]; label?: string }[] = [];
   
   const featured = collections.filter(c => c.featured);
-  if (featured.length > 0) rows.push({ books: featured, label: '✦ Featured' });
-  rows.push({ books: collections, label: 'All Volumes' });
+  const nonFeatured = collections.filter(c => !c.featured);
 
-  const fill = [...collections].reverse();
-  while (rows.length < targetRows) {
-    const n = rows.length;
-    if (n === 2) rows.push({ books: [...collections, ...fill].slice(0, 6) });
-    else if (n === 3) rows.push({ books: [...fill, ...collections].slice(0, 5) });
-    else rows.push({ books: [...collections, ...fill, ...collections].slice(0, 4) });
+  // Featured shelf (if any featured exist)
+  if (featured.length > 0) {
+    rows.push({ books: featured, label: '✦ Featured' });
   }
+
+  // Remaining collections in shelves of up to 5
+  if (nonFeatured.length > 0) {
+    for (let i = 0; i < nonFeatured.length; i += 5) {
+      rows.push({ 
+        books: nonFeatured.slice(i, i + 5),
+        label: rows.length === 0 ? 'All Volumes' : undefined
+      });
+    }
+  } else if (featured.length > 0 && collections.length > featured.length) {
+    // Edge case: all are featured, no separate "all" needed
+  }
+
+  // If no featured and all went into shelves, label the first one
+  if (rows.length > 0 && !rows[0].label) {
+    rows[0].label = 'All Volumes';
+  }
+
   return rows;
 }
