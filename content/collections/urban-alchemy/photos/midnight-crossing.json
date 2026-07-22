@@ -1,0 +1,41 @@
+{
+  "filename": "midnight-crossing.jpg",
+  "slug": "midnight-crossing",
+  "title": "Solitary Sentinel at Midnight",
+  "caption": "A single figure crossing Shibuya intersection long after the crowds have dispersed.",
+  "story": "At 2 AM, the busiest pedestrian crossing in the world falls quiet. A solitary figure carrying a dark umbrella crosses under the quiet glow of lingering billboards.",
+  "curatorNote": "Mysterious, lonely mood contrast. Strong narrative storytelling element.",
+  "tags": [
+    "night",
+    "street",
+    "solitude",
+    "crossing",
+    "mysterious"
+  ],
+  "mood": "mysterious",
+  "dateTaken": "2024-12-05T02:14:08Z",
+  "location": "Shibuya, Tokyo, Japan",
+  "camera": {
+    "body": "Leica SL2-S",
+    "lens": "Summilux-SL 50mm f/1.4 ASPH"
+  },
+  "exposure": {
+    "iso": 3200,
+    "shutterSpeed": "1/125s",
+    "aperture": "f/1.4",
+    "focalLength": "50mm"
+  },
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "altText": "A lonely pedestrian with an umbrella crossing an empty city intersection at night under glowing billboards.",
+  "variants": {
+    "thumb": "content/collections/urban-alchemy/images/midnight-crossing-thumb.webp",
+    "sm": "content/collections/urban-alchemy/images/midnight-crossing-sm.webp",
+    "md": "content/collections/urban-alchemy/images/midnight-crossing-md.webp",
+    "lg": "content/collections/urban-alchemy/images/midnight-crossing-lg.webp",
+    "full": "content/collections/urban-alchemy/images/midnight-crossing-full.webp"
+  }
+}

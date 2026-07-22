@@ -1,0 +1,414 @@
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useSearchParams } from 'react-router-dom';
+import type { Collection, Photo } from '../../types/archive';
+import { loadPhotos, resolveContentUrl } from '../../lib/archive';
+import SpellCircle from '../arcane/SpellCircle';
+import ProgressiveImage from '../ui/ProgressiveImage';
+
+interface OpenBookProps {
+  collection: Collection;
+  onClose: () => void;
+}
+
+export default function OpenBook({ collection, onClose }: OpenBookProps) {
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [direction, setDirection] = useState(0);
+  const [showInfo, setShowInfo] = useState(false);
+  const touchStartX = useRef(0);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Local state for page index — read initial value from URL for deep-linking
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const p = searchParams.get('p');
+    if (p === null) return -1;
+    const n = parseInt(p, 10);
+    return isNaN(n) ? -1 : n;
+  });
+
+  const mood = getMoodColors(collection.mood);
+
+  useEffect(() => {
+    loadPhotos(collection.slug)
+      .then(p => { setPhotos(p); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [collection.slug]);
+
+  // Sync URL when book opens (set ?book= if not already set)
+  useEffect(() => {
+    if (searchParams.get('book') !== collection.slug) {
+      setSearchParams({ book: collection.slug }, { replace: true });
+    }
+  }, [collection.slug]);
+
+  const totalPages = photos.length;
+  const hasNext = currentIndex < totalPages - 1;
+  const hasPrev = currentIndex > -1;
+
+  const goTo = useCallback((index: number) => {
+    setShowInfo(false);
+    setCurrentIndex(index);
+    if (index === -1) {
+      setSearchParams({ book: collection.slug }, { replace: true });
+    } else {
+      setSearchParams({ book: collection.slug, p: String(index) }, { replace: true });
+    }
+  }, [collection.slug, setSearchParams]);
+
+  const goNext = useCallback(() => {
+    if (hasNext) { setDirection(1); goTo(currentIndex + 1); }
+  }, [hasNext, currentIndex, goTo]);
+
+  const goPrev = useCallback(() => {
+    if (hasPrev) { setDirection(-1); goTo(currentIndex - 1); }
+  }, [hasPrev, currentIndex, goTo]);
+
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { if (showInfo) setShowInfo(false); else handleClose(); }
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goNext(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); }
+      if (e.key === 'i' || e.key === 'I') setShowInfo(s => !s);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [handleClose, goNext, goPrev, showInfo]);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const currentPhoto = currentIndex >= 0 && currentIndex < photos.length ? photos[currentIndex] : null;
+  const coverUrl = collection.coverImage
+    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.md)
+    : '';
+
+  // Preload adjacent photos
+  useEffect(() => {
+    for (const offset of [1, -1, 2]) {
+      const idx = currentIndex + offset;
+      if (idx >= 0 && idx < photos.length) {
+        const url = photos[idx].variants?.md;
+        if (url) { const img = new Image(); img.src = url; }
+      }
+    }
+  }, [currentIndex, photos]);
+
+  // Slide variants — pure horizontal slide
+  const slideVariants = useMemo(() => ({
+    enter: (d: number) => ({ x: d >= 0 ? '100%' : '-100%' }),
+    center: { x: 0 },
+    exit: (d: number) => ({ x: d > 0 ? '-100%' : '100%' }),
+  }), []);
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Backdrop */}
+      <motion.div
+        className="absolute inset-0 bg-black/90"
+        onClick={handleClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      />
+
+      {/* Book container */}
+      <motion.div
+        className="relative z-10 w-[98vw] md:w-[95vw] max-w-[1200px] h-[92vh] md:h-[88vh] max-h-[800px] flex rounded-lg overflow-hidden"
+        initial={{ scale: 0.7, rotateY: -20, opacity: 0 }}
+        animate={{ scale: 1, rotateY: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+        style={{ boxShadow: '0 20px 80px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.1)' }}
+        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          if (Math.abs(dx) > 50) { dx < 0 ? goNext() : goPrev(); }
+        }}
+      >
+          <AnimatePresence mode="wait" custom={direction} initial={false}>
+            {currentIndex === -1 ? (
+              /* TITLE PAGE */
+              <motion.div
+                key="title-spread"
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                className="flex flex-col md:flex-row w-full h-full"
+              >
+                {/* Left — scrollable photo grid */}
+                <div className="h-[35%] md:h-full md:flex-1 relative overflow-y-auto" style={{ background: '#111115' }}>
+                  {!loading && photos.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-0.5 p-0.5">
+                      {photos.map((photo, i) => (
+                        <button
+                          key={photo.slug || i}
+                          onClick={() => { setDirection(1); goTo(i); }}
+                          className="relative aspect-square overflow-hidden group"
+                        >
+                          <ProgressiveImage
+                            src={photo.variants?.thumb || photo.variants?.md || ''}
+                            alt={photo.altText || photo.title || ''}
+                            className="w-full h-full"
+                            fit="cover"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-end">
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 w-full">
+                              <p className="font-heading text-[9px] text-white tracking-wider truncate">{photo.title}</p>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : loading ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <SpellCircle size={80} glowColor="amber" animate={true} />
+                    </div>
+                  ) : coverUrl ? (
+                    <>
+                      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${coverUrl})` }} />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/30" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-arcane-deep to-arcane-void">
+                      <SpellCircle size={150} glowColor="amber" animate={true} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Right — collection info */}
+                <div 
+                  className="flex-1 relative overflow-hidden overflow-y-auto"
+                  style={{
+                    background: 'linear-gradient(135deg, #f5f0e6 0%, #efe8d8 50%, #e8dcc8 100%)',
+                    boxShadow: 'inset 4px 0 15px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'4\' height=\'4\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Crect width=\'1\' height=\'1\' fill=\'%23000\'/%3E%3C/svg%3E")' }} />
+                  
+                  <div className="flex flex-col justify-center items-center h-full p-8 text-center">
+                    <span className="font-heading text-[10px] tracking-[0.5em] uppercase text-stone-400 mb-4">
+                      Volume {collection.volumeNumber}
+                    </span>
+                    
+                    <h2 className="font-heading text-2xl md:text-4xl text-stone-800 tracking-wider mb-4 leading-tight">
+                      {collection.title}
+                    </h2>
+                    
+                    <svg viewBox="0 0 120 8" className="w-24 my-4">
+                      <line x1="0" y1="4" x2="48" y2="4" stroke={mood.accent} strokeWidth="0.5" opacity="0.4" />
+                      <circle cx="60" cy="4" r="2.5" fill="none" stroke={mood.accent} strokeWidth="0.7" opacity="0.5" />
+                      <circle cx="60" cy="4" r="1" fill={mood.accent} opacity="0.4" />
+                      <line x1="72" y1="4" x2="120" y2="4" stroke={mood.accent} strokeWidth="0.5" opacity="0.4" />
+                    </svg>
+                    
+                    <p className="font-body text-sm text-stone-500 max-w-sm leading-relaxed mb-4 italic">
+                      {collection.description}
+                    </p>
+                    
+                    {collection.story && (
+                      <p className="font-body text-xs text-stone-400 max-w-sm leading-relaxed mb-6">
+                        {collection.story}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap justify-center gap-2 mb-6">
+                      {collection.tags?.map((tag: string) => (
+                        <span key={tag} className="text-[9px] tracking-[0.15em] uppercase text-stone-400 border border-stone-300 px-2 py-0.5 rounded-sm">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <p className="text-[10px] text-stone-400 mb-6">
+                      {collection.location} · {photos.length} memories
+                    </p>
+
+                    {loading ? (
+                      <p className="text-xs text-stone-400 italic animate-pulse">Loading...</p>
+                    ) : (
+                      <button
+                        onClick={goNext}
+                        className="font-heading text-xs tracking-[0.2em] uppercase text-stone-500 hover:text-stone-800 transition-colors border border-stone-300 hover:border-stone-500 px-6 py-2 rounded-sm"
+                      >
+                        Turn Page →
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ) : currentPhoto ? (
+              /* PHOTO SPREAD */
+              <motion.div
+                key={`photo-${currentIndex}`}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                className="w-full h-full relative cursor-pointer"
+                onClick={() => setShowInfo(s => !s)}
+              >
+                <div className="absolute inset-0 bg-black">
+                  <ProgressiveImage
+                    src={currentPhoto.variants?.md || ''}
+                    alt={currentPhoto.altText || currentPhoto.title || ''}
+                    className="w-full h-full"
+                    fit="contain"
+                    eager
+                  />
+                </div>
+
+                {/* Title bar at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6 pointer-events-none">
+                  <h3 className="font-heading text-lg text-white/90 tracking-wider">{currentPhoto.title}</h3>
+                  <p className="font-body text-xs text-white/50 mt-1">{currentPhoto.location}</p>
+                </div>
+
+                {/* Info overlay */}
+                <AnimatePresence>
+                  {showInfo && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="absolute inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-8 z-20"
+                      onClick={(e) => { e.stopPropagation(); setShowInfo(false); }}
+                    >
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 10, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="max-w-2xl w-full max-h-[80%] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="text-center mb-6">
+                          <h3 className="font-heading text-2xl text-white tracking-wider mb-2">{currentPhoto.title}</h3>
+                          <div className="w-16 h-px bg-white/20 mx-auto" />
+                        </div>
+
+                        <p className="font-body text-sm text-white/80 leading-relaxed italic text-center mb-4">
+                          "{currentPhoto.caption}"
+                        </p>
+
+                        {currentPhoto.story && (
+                          <p className="font-body text-sm text-white/60 leading-relaxed text-center mb-6">{currentPhoto.story}</p>
+                        )}
+
+                        {currentPhoto.curatorNote && (
+                          <div className="border-l-2 border-white/20 pl-4 mb-6 mx-auto max-w-md">
+                            <p className="font-body text-xs text-white/40 leading-relaxed italic">
+                              Curator's note: {currentPhoto.curatorNote}
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-lg mx-auto mt-8 pt-6 border-t border-white/10">
+                          {currentPhoto.camera && (
+                            <>
+                              <InfoBlock label="Camera" value={currentPhoto.camera.body} />
+                              <InfoBlock label="Lens" value={currentPhoto.camera.lens} />
+                            </>
+                          )}
+                          {currentPhoto.exposure && (
+                            <>
+                              <InfoBlock label="Aperture" value={currentPhoto.exposure.aperture} />
+                              <InfoBlock label="Shutter" value={currentPhoto.exposure.shutterSpeed} />
+                              <InfoBlock label="ISO" value={String(currentPhoto.exposure.iso)} />
+                              <InfoBlock label="Focal Length" value={currentPhoto.exposure.focalLength} />
+                            </>
+                          )}
+                          {currentPhoto.location && <InfoBlock label="Location" value={currentPhoto.location} />}
+                          {currentPhoto.dateTaken && <InfoBlock label="Date" value={currentPhoto.dateTaken.split('T')[0]} />}
+                        </div>
+
+                        <p className="text-center text-[10px] text-white/20 mt-6">Click anywhere to close</p>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+      </motion.div>
+
+      {/* Nav arrows */}
+      {hasPrev && (
+        <button onClick={goPrev} className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all" aria-label="Previous">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+      )}
+      {hasNext && (
+        <button onClick={goNext} className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all" aria-label="Next">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+      )}
+
+      {/* Close — z-30 to sit above everything */}
+      <button
+        onClick={(e) => { e.stopPropagation(); setShowInfo(false); handleClose(); }}
+        className="absolute top-3 right-3 z-30 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all"
+        aria-label="Close"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+      </button>
+
+      {/* Bottom bar */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/40 backdrop-blur-sm rounded-full px-4 py-1.5 flex items-center gap-3">
+        <span className="text-[10px] text-white/50 font-heading tracking-[0.15em]">
+          {currentIndex === -1 ? 'Title Page' : `${currentIndex + 1} / ${totalPages}`}
+        </span>
+        {currentIndex >= 0 && (
+          <>
+            <span className="text-[10px] text-white/20">·</span>
+            <button
+              onClick={() => { setDirection(-1); goTo(-1); }}
+              className="text-[10px] text-white/40 hover:text-white/70 font-heading tracking-[0.1em] transition-colors"
+            >
+              ← Title Page
+            </button>
+          </>
+        )}
+        <span className="text-[10px] text-white/20">·</span>
+        <span className="text-[10px] text-white/30 font-body">
+          {currentIndex >= 0 ? 'Click photo for details' : 'ESC to close'}
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+function InfoBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[9px] tracking-[0.2em] uppercase text-white/30 mb-0.5">{label}</dt>
+      <dd className="text-xs text-white/70 font-body">{value}</dd>
+    </div>
+  );
+}
+
+function getMoodColors(mood: string) {
+  const colors: Record<string, { accent: string }> = {
+    ethereal: { accent: '#7eb8da' }, bold: { accent: '#d4776b' }, serene: { accent: '#6ba88c' },
+    dramatic: { accent: '#9b7ec4' }, intimate: { accent: '#c4a67e' }, mysterious: { accent: '#7e9bc4' },
+    vibrant: { accent: '#e8b54d' }, melancholic: { accent: '#8888aa' }, whimsical: { accent: '#c47eb8' },
+    raw: { accent: '#a89b7e' },
+  };
+  return colors[mood] || colors.ethereal;
+}

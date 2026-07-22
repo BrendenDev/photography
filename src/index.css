@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-arcane-void: #0a0a0f;
+  --color-arcane-deep: #111118;
+  --color-arcane-surface: #1a1a24;
+  --color-arcane-elevated: #242430;
+  --color-arcane-border: #2a2a38;
+  --color-arcane-muted: #4a4a5a;
+  
+  --color-arcane-brass: #b8956a;
+  --color-arcane-brass-light: #d4b896;
+  --color-arcane-amber: #c9943e;
+  --color-arcane-amber-glow: #e8b54d;
+  
+  --color-arcane-cyan: #4dd0e1;
+  --color-arcane-cyan-glow: #67e8f9;
+  --color-arcane-teal: #2dd4bf;
+  
+  --color-arcane-moss: #4a6741;
+  --color-arcane-moss-light: #6b8f5e;
+  
+  --color-arcane-parchment: #e8dcc8;
+  --color-arcane-parchment-dim: #c4b8a4;
+  --color-arcane-ink: #1a1510;
+
+  --color-arcane-wood: #3d2b1f;
+  --color-arcane-wood-light: #5c3d2e;
+  --color-arcane-leather: #4a3728;
+  --color-arcane-leather-light: #6b5241;
+  
+  --color-arcane-glow-blue: rgba(77, 208, 225, 0.15);
+  --color-arcane-glow-amber: rgba(232, 181, 77, 0.15);
+  --color-arcane-glow-strong-blue: rgba(77, 208, 225, 0.3);
+  
+  --font-heading: 'Cinzel', serif;
+  --font-display: 'Cinzel Decorative', serif;
+  --font-body: 'Inter', sans-serif;
+  
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+  --animate-rune-spin: rune-spin 20s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-reveal: reveal 0.6s ease-out;
+  --animate-flicker: flicker 4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes rune-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.8; }
+  25% { opacity: 1; }
+  50% { opacity: 0.6; }
+  75% { opacity: 0.9; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== GLOBAL BASE STYLES ===== */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    background-color: #0a0a0f;
+    color-scheme: dark;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-arcane-void);
+    color: var(--color-arcane-parchment);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
+
+  #root {
+    min-height: 100vh;
+    background-color: var(--color-arcane-void);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-arcane-parchment);
+    letter-spacing: 0.04em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  ::selection {
+    background: var(--color-arcane-glow-strong-blue);
+    color: var(--color-arcane-parchment);
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-arcane-void); }
+  ::-webkit-scrollbar-thumb { background: var(--color-arcane-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-arcane-muted); }
+}
+
+/* ===== UTILITY CLASSES ===== */
+@layer utilities {
+  /* Hide scrollbar but keep scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touch-friendly tap targets on mobile */
+  @media (pointer: coarse) {
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
