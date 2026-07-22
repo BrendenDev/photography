@@ -150,11 +150,11 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
         animate={{ opacity: 1 }}
       />
 
-      {/* Book container */}
+      {/* Book container — full screen on mobile, constrained on desktop */}
       <motion.div
-        className="relative z-10 w-[98vw] md:w-[95vw] max-w-[1200px] h-[92vh] md:h-[88vh] max-h-[800px] flex rounded-lg overflow-hidden"
-        initial={{ scale: 0.7, rotateY: -20, opacity: 0 }}
-        animate={{ scale: 1, rotateY: 0, opacity: 1 }}
+        className="relative z-10 w-screen h-[100dvh] md:w-[95vw] md:max-w-[1200px] md:h-[88vh] md:max-h-[800px] flex rounded-none md:rounded-lg overflow-hidden"
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         style={{ boxShadow: '0 20px 80px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.1)' }}
         onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
@@ -403,7 +403,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
       </button>
 
       {/* Bottom bar */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/40 backdrop-blur-sm rounded-full px-4 py-1.5 flex items-center gap-3">
+      <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/40 backdrop-blur-sm rounded-full px-3 md:px-4 py-1.5 flex items-center gap-2 md:gap-3 max-w-[90vw]">
         <span className="text-[10px] text-white/50 font-heading tracking-[0.15em]">
           {currentIndex === -1 ? 'Title Page' : `${currentIndex + 1} / ${totalPages}`}
         </span>
@@ -419,7 +419,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
           </>
         )}
         <span className="text-[10px] text-white/20">·</span>
-        <span className="text-[10px] text-white/30 font-body">
+        <span className="hidden md:inline text-[10px] text-white/30 font-body">
           {currentIndex >= 0 ? 'Click photo for details' : 'ESC to close'}
         </span>
         {(canGoPrevCollection || canGoNextCollection) && (

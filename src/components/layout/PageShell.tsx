@@ -15,7 +15,7 @@ export function PageShell({ children }: PageShellProps) {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-arcane-void text-arcane-parchment font-body">
+    <div className="min-h-screen flex flex-col bg-arcane-void text-arcane-parchment font-body overflow-x-hidden">
       <FloatingNav />
       <main className="flex-grow bg-arcane-void">
         {children}

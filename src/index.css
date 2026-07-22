@@ -45,6 +45,11 @@
   --animate-flicker: flicker 4s ease-in-out infinite;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 @keyframes glow-pulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
