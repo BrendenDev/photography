@@ -1,0 +1,29 @@
+{
+  "title": "IMG_5482",
+  "slug": "img-5482-9851",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/Test Collection/images/img-5482-9851-thumb.webp",
+    "lg": "content/collections/Test Collection/images/img-5482-9851-lg.webp"
+  },
+  "dateTaken": "2026-06-01T03:03:02.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 800,
+    "shutterSpeed": "1/200",
+    "aperture": "f/5.6",
+    "focalLength": "55mm",
+    "exposureCompensation": "0 EV",
+    "meteringMode": "Pattern",
+    "whiteBalance": "Auto",
+    "flash": "Flash did not fire, compulsory flash mode",
+    "dateTaken": "2026-06-01T03:03:02.000Z"
+  }
+}
