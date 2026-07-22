@@ -87,7 +87,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
 
   const currentPhoto = currentIndex >= 0 && currentIndex < photos.length ? photos[currentIndex] : null;
   const coverUrl = collection.coverImage
-    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.md)
+    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.lg)
     : '';
 
   // Preload adjacent photos
@@ -95,7 +95,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
     for (const offset of [1, -1, 2]) {
       const idx = currentIndex + offset;
       if (idx >= 0 && idx < photos.length) {
-        const url = photos[idx].variants?.md;
+        const url = photos[idx].variants?.lg;
         if (url) { const img = new Image(); img.src = url; }
       }
     }
@@ -160,7 +160,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
                           className="relative aspect-square overflow-hidden group"
                         >
                           <ProgressiveImage
-                            src={photo.variants?.thumb || photo.variants?.md || ''}
+                            src={photo.variants?.thumb || photo.variants?.lg || ''}
                             alt={photo.altText || photo.title || ''}
                             className="w-full h-full"
                             fit="cover"
@@ -265,7 +265,7 @@ export default function OpenBook({ collection, onClose }: OpenBookProps) {
               >
                 <div className="absolute inset-0 bg-black">
                   <ProgressiveImage
-                    src={currentPhoto.variants?.md || ''}
+                    src={currentPhoto.variants?.lg || ''}
                     alt={currentPhoto.altText || currentPhoto.title || ''}
                     className="w-full h-full"
                     fit="contain"

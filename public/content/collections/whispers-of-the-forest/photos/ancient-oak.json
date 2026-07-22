@@ -33,9 +33,6 @@
   "altText": "A massive old oak tree covered in green moss with twisting branches in a quiet forest setting.",
   "variants": {
     "thumb": "content/collections/whispers-of-the-forest/images/ancient-oak-thumb.webp",
-    "sm": "content/collections/whispers-of-the-forest/images/ancient-oak-sm.webp",
-    "md": "content/collections/whispers-of-the-forest/images/ancient-oak-md.webp",
-    "lg": "content/collections/whispers-of-the-forest/images/ancient-oak-lg.webp",
-    "full": "content/collections/whispers-of-the-forest/images/ancient-oak-full.webp"
+    "lg": "content/collections/whispers-of-the-forest/images/ancient-oak-lg.webp"
   }
 }

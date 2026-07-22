@@ -33,9 +33,6 @@
   "altText": "Low angle view of massive glass skyscrapers reaching into the sky forming a canyon effect.",
   "variants": {
     "thumb": "content/collections/urban-alchemy/images/steel-canyon-thumb.webp",
-    "sm": "content/collections/urban-alchemy/images/steel-canyon-sm.webp",
-    "md": "content/collections/urban-alchemy/images/steel-canyon-md.webp",
-    "lg": "content/collections/urban-alchemy/images/steel-canyon-lg.webp",
-    "full": "content/collections/urban-alchemy/images/steel-canyon-full.webp"
+    "lg": "content/collections/urban-alchemy/images/steel-canyon-lg.webp"
   }
 }

@@ -33,9 +33,6 @@
   "altText": "A lonely pedestrian with an umbrella crossing an empty city intersection at night under glowing billboards.",
   "variants": {
     "thumb": "content/collections/urban-alchemy/images/midnight-crossing-thumb.webp",
-    "sm": "content/collections/urban-alchemy/images/midnight-crossing-sm.webp",
-    "md": "content/collections/urban-alchemy/images/midnight-crossing-md.webp",
-    "lg": "content/collections/urban-alchemy/images/midnight-crossing-lg.webp",
-    "full": "content/collections/urban-alchemy/images/midnight-crossing-full.webp"
+    "lg": "content/collections/urban-alchemy/images/midnight-crossing-lg.webp"
   }
 }

@@ -2,12 +2,6 @@ import type { ArchiveManifest, Collection, Photo } from '../types/archive';
 
 const BASE_URL = import.meta.env.BASE_URL;
 
-// Known collection slugs — in production, these would come from a generated index
-const COLLECTION_SLUGS = [
-  'whispers-of-the-forest',
-  'urban-alchemy',
-];
-
 /**
  * Resolve a content-relative path to a full URL.
  * Converts "content/collections/foo/images/bar.webp" to "/photography/content/collections/foo/images/bar.webp"
@@ -25,9 +19,22 @@ export async function loadManifest(): Promise<ArchiveManifest> {
   return res.json();
 }
 
+// Load collection slugs dynamically from index.json
+async function getCollectionSlugs(): Promise<string[]> {
+  try {
+    const res = await fetch(`${BASE_URL}content/collections/index.json`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.collections || [];
+  } catch {
+    return [];
+  }
+}
+
 export async function loadCollections(): Promise<Collection[]> {
+  const slugs = await getCollectionSlugs();
   const results = await Promise.allSettled(
-    COLLECTION_SLUGS.map(slug => loadCollection(slug))
+    slugs.map(slug => loadCollection(slug))
   );
   return results
     .filter((r): r is PromiseFulfilledResult<Collection> => r.status === 'fulfilled')
@@ -59,10 +66,7 @@ export async function loadPhoto(collectionSlug: string, photoSlug: string): Prom
   if (photo.variants) {
     photo.variants = {
       thumb: resolveContentUrl(photo.variants.thumb),
-      sm: resolveContentUrl(photo.variants.sm),
-      md: resolveContentUrl(photo.variants.md),
       lg: resolveContentUrl(photo.variants.lg),
-      full: resolveContentUrl(photo.variants.full),
     };
   }
   

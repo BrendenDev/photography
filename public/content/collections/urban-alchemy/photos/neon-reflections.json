@@ -33,9 +33,6 @@
   "altText": "Rain wet city pavement reflecting bright pink and cyan neon lights at night.",
   "variants": {
     "thumb": "content/collections/urban-alchemy/images/neon-reflections-thumb.webp",
-    "sm": "content/collections/urban-alchemy/images/neon-reflections-sm.webp",
-    "md": "content/collections/urban-alchemy/images/neon-reflections-md.webp",
-    "lg": "content/collections/urban-alchemy/images/neon-reflections-lg.webp",
-    "full": "content/collections/urban-alchemy/images/neon-reflections-full.webp"
+    "lg": "content/collections/urban-alchemy/images/neon-reflections-lg.webp"
   }
 }

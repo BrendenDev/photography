@@ -58,7 +58,7 @@ export default function CollectionPage() {
   }
 
   const coverUrl = collection.coverImage 
-    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.md)
+    ? resolveContentUrl(typeof collection.coverImage === 'string' ? collection.coverImage : collection.coverImage.lg)
     : '';
 
   return (

@@ -1,0 +1,72 @@
+.admin-root {
+  --admin-bg-main: #1e1e1e;
+  --admin-bg-panel: #252526;
+  --admin-bg-toolbar: #2d2d30;
+  --admin-text-primary: #e0e0e0;
+  --admin-text-secondary: #888888;
+  --admin-text-accent: #569cd6;
+  --admin-border: #3e3e42;
+  --admin-btn-primary: #1565c0;
+  --admin-btn-primary-hover: #1976d2;
+  --admin-danger: #e57373;
+  --admin-input-bg: #3c3c3c;
+  --admin-input-border: #555555;
+  
+  background-color: var(--admin-bg-main);
+  color: var(--admin-text-primary);
+  min-height: 100vh;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-root * {
+  box-sizing: border-box;
+}
+
+.admin-panel {
+  background-color: var(--admin-bg-panel);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-input {
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text-primary);
+  border: 1px solid var(--admin-input-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--admin-text-accent);
+}
+
+.admin-btn {
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text-primary);
+  border: 1px solid var(--admin-input-border);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-btn:hover {
+  background-color: var(--admin-border);
+}
+
+.admin-btn-primary {
+  background-color: var(--admin-btn-primary);
+  border-color: var(--admin-btn-primary);
+  color: white;
+  font-weight: bold;
+}
+
+.admin-btn-primary:hover {
+  background-color: var(--admin-btn-primary-hover);
+}
+
+.admin-text-danger {
+  color: var(--admin-danger);
+}

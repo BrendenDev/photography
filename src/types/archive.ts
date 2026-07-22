@@ -79,10 +79,7 @@ export interface TechnicalMetadata {
  */
 export interface ImageVariants {
   thumb: string;
-  sm: string;
-  md: string;
   lg: string;
-  full: string;
 }
 
 /**

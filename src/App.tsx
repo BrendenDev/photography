@@ -12,6 +12,7 @@ import HomePage from './pages/HomePage';
 const LibraryPage = lazy(() => import('./pages/LibraryPage'));
 const CollectionPage = lazy(() => import('./pages/CollectionPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 
 /** Themed loading fallback */
 function LoadingFallback() {
@@ -51,12 +52,29 @@ function AnimatedRoutes() {
   );
 }
 
+function AppContent() {
+  const location = useLocation();
+  // Admin route bypasses PageShell
+  if (location.pathname.startsWith('/admin')) {
+    return (
+      <Suspense fallback={<div className="flex items-center justify-center h-screen bg-[#1e1e1e] text-white">Loading Admin...</div>}>
+        <Routes>
+          <Route path="/admin/*" element={<AdminPage />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+  return (
+    <PageShell>
+      <AnimatedRoutes />
+    </PageShell>
+  );
+}
+
 function App() {
   return (
     <Router basename="/photography">
-      <PageShell>
-        <AnimatedRoutes />
-      </PageShell>
+      <AppContent />
     </Router>
   );
 }

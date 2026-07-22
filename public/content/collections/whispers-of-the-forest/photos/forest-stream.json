@@ -33,9 +33,6 @@
   "altText": "A long exposure photo of a smooth flowing forest stream over smooth mossy rocks.",
   "variants": {
     "thumb": "content/collections/whispers-of-the-forest/images/forest-stream-thumb.webp",
-    "sm": "content/collections/whispers-of-the-forest/images/forest-stream-sm.webp",
-    "md": "content/collections/whispers-of-the-forest/images/forest-stream-md.webp",
-    "lg": "content/collections/whispers-of-the-forest/images/forest-stream-lg.webp",
-    "full": "content/collections/whispers-of-the-forest/images/forest-stream-full.webp"
+    "lg": "content/collections/whispers-of-the-forest/images/forest-stream-lg.webp"
   }
 }

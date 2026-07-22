@@ -33,9 +33,6 @@
   "altText": "Golden shafts of sunlight streaming through dense forest trees down onto green ferns.",
   "variants": {
     "thumb": "content/collections/whispers-of-the-forest/images/dappled-light-thumb.webp",
-    "sm": "content/collections/whispers-of-the-forest/images/dappled-light-sm.webp",
-    "md": "content/collections/whispers-of-the-forest/images/dappled-light-md.webp",
-    "lg": "content/collections/whispers-of-the-forest/images/dappled-light-lg.webp",
-    "full": "content/collections/whispers-of-the-forest/images/dappled-light-full.webp"
+    "lg": "content/collections/whispers-of-the-forest/images/dappled-light-lg.webp"
   }
 }

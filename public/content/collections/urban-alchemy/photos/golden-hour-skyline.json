@@ -33,9 +33,6 @@
   "altText": "City skyline reflecting warm golden sunset light across water.",
   "variants": {
     "thumb": "content/collections/urban-alchemy/images/golden-hour-skyline-thumb.webp",
-    "sm": "content/collections/urban-alchemy/images/golden-hour-skyline-sm.webp",
-    "md": "content/collections/urban-alchemy/images/golden-hour-skyline-md.webp",
-    "lg": "content/collections/urban-alchemy/images/golden-hour-skyline-lg.webp",
-    "full": "content/collections/urban-alchemy/images/golden-hour-skyline-full.webp"
+    "lg": "content/collections/urban-alchemy/images/golden-hour-skyline-lg.webp"
   }
 }

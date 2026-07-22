@@ -32,7 +32,7 @@ export default function PhotoGrid({ photos, collectionSlug: _collectionSlug, cla
       {photos.map((photo) => (
         <motion.div key={photo.slug} variants={itemVariants}>
           <MemoryFrame
-            src={photo.variants?.md || ''}
+            src={photo.variants?.lg || ''}
             alt={photo.altText || photo.title}
             title={photo.title}
             caption={photo.location}
