@@ -6,7 +6,7 @@
   <script>
     // GitHub Pages SPA redirect
     // Converts 404 paths into query params so index.html can handle client-side routing
-    var pathSegmentsToKeep = 1; // '/photography' is 1 segment
+    var pathSegmentsToKeep = 0; // Custom domain serves from root
     var l = window.location;
     l.replace(
       l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +

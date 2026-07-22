@@ -6,17 +6,6 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    {
-      name: 'redirect-base',
-      configureServer(server) {
-        server.middlewares.use((req, _res, next) => {
-          if (req.url === '/photography') {
-            req.url = '/photography/';
-          }
-          next();
-        });
-      },
-    },
   ],
-  base: '/photography/',
+  base: '/',
 })
