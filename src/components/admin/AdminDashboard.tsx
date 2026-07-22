@@ -20,6 +20,8 @@ export default function AdminDashboard() {
   const [statusMessage, setStatusMessage] = useState('Initializing...');
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [tagsFileSha, setTagsFileSha] = useState<string | undefined>();
+  const [collectionIndex, setCollectionIndex] = useState<string[]>([]);
+  const [indexFileSha, setIndexFileSha] = useState<string | undefined>();
 
   const loadTags = async () => {
     if (!token) return;
@@ -29,6 +31,17 @@ export default function AdminDashboard() {
       setTagsFileSha(sha);
     } catch {
       setAvailableTags([]);
+    }
+  };
+
+  const loadIndex = async () => {
+    if (!token) return;
+    try {
+      const { data, sha } = await readJsonFile<{ collections: string[] }>(token, 'public/content/collections/index.json');
+      setCollectionIndex(data.collections || []);
+      setIndexFileSha(sha);
+    } catch {
+      setCollectionIndex([]);
     }
   };
 
@@ -64,6 +77,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadCollections();
     loadTags();
+    loadIndex();
   }, [token]);
 
   const selectCollection = async (slug: string) => {
@@ -167,13 +181,35 @@ export default function AdminDashboard() {
   };
 
   const handleNewCollection = async () => {
-    const slug = prompt('Enter new collection slug (e.g. nature, portraits):');
-    if (!slug) return;
+    const name = prompt('Enter new collection name (e.g. "Golden Hour", "Street Portraits"):');
+    if (!name?.trim()) return;
+    
+    // Auto-generate clean kebab-case slug
+    let slug = name.trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')  // strip non-alphanumeric
+      .replace(/\s+/g, '-')           // spaces → hyphens
+      .replace(/-+/g, '-')            // collapse multiple hyphens
+      .replace(/^-|-$/g, '');         // trim leading/trailing hyphens
+    
+    if (!slug) {
+      alert('Could not generate a valid slug from that name.');
+      return;
+    }
+
+    // Check for collisions against existing collections and pending changes
+    const existingSlugs = new Set([
+      ...collections.map(c => c.slug),
+      ...collectionIndex
+    ]);
+    if (existingSlugs.has(slug)) {
+      slug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+    }
     
     const newCollJson = {
-      title: slug,
+      title: name.trim(),
       slug: slug,
-      volumeNumber: 1,
+      volumeNumber: collections.length + 1,
       featured: false,
       visible: true,
       photoOrder: []
@@ -203,10 +239,8 @@ export default function AdminDashboard() {
       action: 'create'
     });
     
-    // No index.json needed — collections are discovered via directory listing
-    
     setPendingChanges(newChanges);
-    setCollections([...collections, { slug, title: slug, photoCount: 0 }]);
+    setCollections([...collections, { slug, title: name.trim(), photoCount: 0 }]);
     selectCollection(slug);
   };
 
@@ -383,6 +417,25 @@ export default function AdminDashboard() {
         });
       }
 
+      // Auto-update collections index.json if new collections were created
+      const updatedIndex = new Set(collectionIndex);
+      for (const change of changesArr) {
+        const match = change.path.match(/^public\/content\/collections\/([^/]+)\/collection\.json$/);
+        if (match && change.action !== 'delete') {
+          updatedIndex.add(match[1]);
+        }
+      }
+      const sortedIndex = [...updatedIndex].sort();
+      if (JSON.stringify(sortedIndex) !== JSON.stringify([...collectionIndex].sort())) {
+        changesArr.push({
+          path: 'public/content/collections/index.json',
+          content: JSON.stringify({ collections: sortedIndex }, null, 2),
+          encoding: 'utf-8',
+          action: indexFileSha ? 'update' : 'create',
+          sha: indexFileSha
+        });
+      }
+
       const message = `archive-${Math.random().toString(36).substring(2, 10)}`;
       await batchCommit(token, changesArr, message);
       setPendingChanges(new Map());
@@ -390,6 +443,7 @@ export default function AdminDashboard() {
       setTimeout(() => {
         loadCollections();
         loadTags();
+        loadIndex();
         setSelectedCollection(null);
         setSelectedPhoto(null);
         setPhotos([]);
