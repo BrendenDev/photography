@@ -33,7 +33,7 @@ interface ArcaneParticlesProps {
  * 2. Constellation threads — faint lines connecting nearby motes
  * 3. Star twinkles — tiny points that flash in and fade away
  */
-export default function ArcaneParticles({ count = 40, className = '' }: ArcaneParticlesProps) {
+export default function ArcaneParticles({ count = 25, className = '' }: ArcaneParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const motesRef = useRef<Mote[]>([]);
   const twinklesRef = useRef<Twinkle[]>([]);
@@ -118,83 +118,31 @@ export default function ArcaneParticles({ count = 40, className = '' }: ArcanePa
         ctx.fill();
       }
 
-      // ── Constellation threads between nearby motes ──
-      const connectionDist = 120;
-      for (let i = 0; i < motes.length; i++) {
-        for (let j = i + 1; j < motes.length; j++) {
-          const dx = motes[i].x - motes[j].x;
-          const dy = motes[i].y - motes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < connectionDist) {
-            const alpha = (1 - dist / connectionDist) * 0.06 * Math.min(motes[i].opacity, motes[j].opacity) * 4;
-            const avgHue = (motes[i].hue + motes[j].hue) / 2;
-            ctx.beginPath();
-            ctx.strokeStyle = `hsla(${avgHue}, 50%, 70%, ${alpha})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(motes[i].x, motes[i].y);
-            ctx.lineTo(motes[j].x, motes[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // ── Star twinkles ──
-      // Spawn occasionally
-      if (Math.random() < 0.03) {
+      // ── Star twinkles ── (simplified: plain dots, no save/restore)
+      if (Math.random() < 0.025) {
         twinklesRef.current.push({
           x: Math.random() * cw,
           y: Math.random() * ch,
           life: 0,
           maxLife: 60 + Math.random() * 80,
           size: Math.random() * 1.5 + 0.5,
-          hue: 260 + Math.random() * 40, // purple range
+          hue: 260 + Math.random() * 40,
         });
       }
 
-      // Update and draw twinkles
       twinklesRef.current = twinklesRef.current.filter(t => {
         t.life++;
         if (t.life > t.maxLife) return false;
 
         const progress = t.life / t.maxLife;
-        // Ease in and out
         const alpha = progress < 0.3
           ? (progress / 0.3) * 0.6
           : (1 - (progress - 0.3) / 0.7) * 0.6;
 
-        // 4-point star shape
-        const s = t.size * (0.8 + Math.sin(t.life * 0.15) * 0.2);
-        ctx.save();
-        ctx.translate(t.x, t.y);
-        ctx.rotate(t.life * 0.01);
-
-        // Horizontal spike
         ctx.beginPath();
-        ctx.moveTo(-s * 3, 0);
-        ctx.lineTo(0, -s * 0.3);
-        ctx.lineTo(s * 3, 0);
-        ctx.lineTo(0, s * 0.3);
-        ctx.closePath();
-        ctx.fillStyle = `hsla(${t.hue}, 60%, 80%, ${alpha * 0.5})`;
-        ctx.fill();
-
-        // Vertical spike
-        ctx.beginPath();
-        ctx.moveTo(0, -s * 3);
-        ctx.lineTo(-s * 0.3, 0);
-        ctx.lineTo(0, s * 3);
-        ctx.lineTo(s * 0.3, 0);
-        ctx.closePath();
-        ctx.fillStyle = `hsla(${t.hue}, 60%, 80%, ${alpha * 0.5})`;
-        ctx.fill();
-
-        // Core dot
-        ctx.beginPath();
-        ctx.arc(0, 0, s * 0.5, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${t.hue}, 70%, 90%, ${alpha})`;
+        ctx.arc(t.x, t.y, t.size, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.restore();
         return true;
       });
 

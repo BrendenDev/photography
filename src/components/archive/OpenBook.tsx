@@ -150,9 +150,9 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
 
   // Fade through darkness — pages dissolve into shadow and re-emerge
   const pageVariants = useMemo(() => ({
-    enter: { opacity: 0, scale: 0.97, filter: 'brightness(0.3)' },
-    center: { opacity: 1, scale: 1, filter: 'brightness(1)' },
-    exit: { opacity: 0, scale: 0.97, filter: 'brightness(0.3)' },
+    enter: { opacity: 0, scale: 0.97 },
+    center: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.97 },
   }), []);
 
   const pageTransition = { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] };
@@ -328,9 +328,9 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
                 </div>
 
                 {/* Title bar at bottom — always visible */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 pb-14 md:p-6 md:pb-16 pointer-events-none">
-                  <h3 className="font-heading text-base md:text-lg text-white/90 tracking-wider">{currentPhoto.title}</h3>
-                  <p className="font-body text-xs text-white/50 mt-1">{currentPhoto.location}</p>
+                <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.15) 70%, transparent 100%)', padding: '3rem 1.5rem 3.5rem' }}>
+                  <h3 className="font-heading text-base md:text-lg text-white tracking-wider" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,1)' }}>{currentPhoto.title}</h3>
+                  {currentPhoto.location && <p className="font-body text-xs text-white/60 mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>{currentPhoto.location}</p>}
                 </div>
 
                 {/* Info overlay */}
@@ -341,7 +341,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.25 }}
-                      className="absolute inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-8 z-20"
+                      className="absolute inset-0 bg-black/80 flex items-center justify-center p-8 z-20"
                       onClick={(e) => { e.stopPropagation(); setShowInfo(false); }}
                     >
                       <motion.div
@@ -427,7 +427,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
       </button>
 
       {/* Bottom bar */}
-      <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/40 backdrop-blur-sm rounded-full px-3 md:px-4 py-1.5 flex items-center gap-2 md:gap-3 max-w-[90vw]" style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 rounded-full px-3 md:px-4 py-1.5 flex items-center gap-2 md:gap-3 max-w-[90vw]" style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <span className="text-[10px] text-white/50 font-heading tracking-[0.15em]">
           {currentIndex === -1 ? 'Title Page' : `${currentIndex + 1} / ${totalPages}`}
         </span>
