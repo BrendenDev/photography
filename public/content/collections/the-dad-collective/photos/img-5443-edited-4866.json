@@ -1,0 +1,26 @@
+{
+  "title": "IMG_5443_edited",
+  "slug": "img-5443-edited-4866",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/the-dad-collective/images/img-5443-edited-4866-thumb.webp",
+    "lg": "content/collections/the-dad-collective/images/img-5443-edited-4866-lg.webp"
+  },
+  "dateTaken": "2026-05-30T20:11:56.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 200,
+    "shutterSpeed": "1/800",
+    "aperture": "f/5.6",
+    "focalLength": "55mm",
+    "dateTaken": "2026-05-30T20:11:56.000Z",
+    "software": "RapidRAW"
+  }
+}
