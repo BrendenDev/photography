@@ -290,7 +290,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleAddPhotos = async (files: FileList) => {
+  const handleAddPhotos = async (files: File[]) => {
     if (!selectedCollection) return;
     setStatusMessage(`Processing ${files.length} photos...`);
     
@@ -300,8 +300,9 @@ export default function AdminDashboard() {
     
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      setStatusMessage(`Processing photo ${i + 1} of ${files.length}...`);
       const nameWithoutExt = file.name.split('.')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
-      const photoSlug = `${nameWithoutExt}-${Date.now().toString().slice(-4)}`;
+      const photoSlug = `${nameWithoutExt}-${Date.now().toString(36)}-${i}`;
       
       const variants = await generateVariants(file);
       const thumbBase64 = await blobToBase64(variants.thumb);
@@ -369,36 +370,63 @@ export default function AdminDashboard() {
     setStatusMessage(`Added ${files.length} photos`);
   };
 
-  const handleDeletePhoto = (photoSlug: string) => {
-    if (!selectedCollection) return;
+  const handleDeletePhoto = async (photoSlug: string) => {
+    if (!selectedCollection || !token) return;
     const newChanges = new Map(pendingChanges);
+    const collSlug = selectedCollection.slug;
+    const basePath = `public/content/collections/${collSlug}`;
     
     // Remove from photoOrder
     const newPhotoOrder = selectedCollection.json.photoOrder.filter((s: string) => s !== photoSlug);
     const updatedCollJson = { ...selectedCollection.json, photoOrder: newPhotoOrder, photoCount: newPhotoOrder.length };
     
-    newChanges.set(`public/content/collections/${selectedCollection.slug}/collection.json`, {
-      path: `public/content/collections/${selectedCollection.slug}/collection.json`,
+    newChanges.set(`${basePath}/collection.json`, {
+      path: `${basePath}/collection.json`,
       content: JSON.stringify(updatedCollJson, null, 2),
       encoding: 'utf-8',
       action: selectedCollection.sha ? 'update' : 'create',
       sha: selectedCollection.sha
     });
     
-    if (selectedPhoto && selectedPhoto.slug === photoSlug && selectedPhoto.sha) {
-      newChanges.set(`public/content/collections/${selectedCollection.slug}/photos/${photoSlug}.json`, {
-        path: `public/content/collections/${selectedCollection.slug}/photos/${photoSlug}.json`,
-        content: '',
-        encoding: 'utf-8',
-        action: 'delete',
-        sha: selectedPhoto.sha
-      });
+    // Check if this is a pending (not yet published) photo — just remove from pending changes
+    const thumbPath = `${basePath}/images/${photoSlug}-thumb.webp`;
+    const lgPath = `${basePath}/images/${photoSlug}-lg.webp`;
+    const jsonPath = `${basePath}/photos/${photoSlug}.json`;
+    const isPending = newChanges.has(jsonPath) && newChanges.get(jsonPath)?.action === 'create';
+    
+    if (isPending) {
+      // Just remove the pending creates — nothing to delete from the repo
+      newChanges.delete(thumbPath);
+      newChanges.delete(lgPath);
+      newChanges.delete(jsonPath);
+    } else {
+      // Delete all 3 files from the repo — need SHAs
+      const filesToDelete = [jsonPath, thumbPath, lgPath];
+      for (const filePath of filesToDelete) {
+        try {
+          // Check if we already have this file in pending changes
+          const existing = newChanges.get(filePath);
+          if (existing?.sha) {
+            newChanges.set(filePath, { path: filePath, content: '', encoding: 'utf-8', action: 'delete', sha: existing.sha });
+          } else {
+            // Fetch SHA from GitHub
+            const res = await listDirectory(token, filePath.substring(0, filePath.lastIndexOf('/')));
+            const fileEntry = res.find((e: { name: string; sha: string }) => e.name === filePath.split('/').pop());
+            if (fileEntry) {
+              newChanges.set(filePath, { path: filePath, content: '', encoding: 'utf-8', action: 'delete', sha: fileEntry.sha });
+            }
+          }
+        } catch {
+          // File might not exist (e.g. old format), skip silently
+        }
+      }
     }
     
     setPendingChanges(newChanges);
     setPhotos(photos.filter(p => p.slug !== photoSlug));
     setSelectedCollection({ ...selectedCollection, json: updatedCollJson });
     setSelectedPhoto(null);
+    setStatusMessage(`Photo "${photoSlug}" queued for deletion`);
   };
 
   const handleReorder = (newOrder: string[]) => {

@@ -12,7 +12,7 @@ interface Props {
   selectedSlug: string | null;
   collectionSlug: string | null;
   onSelect: (slug: string) => void;
-  onAddPhotos: (files: FileList) => void;
+  onAddPhotos: (files: File[]) => void;
   onDeletePhoto: (slug: string) => void;
   onReorder: (newOrder: string[]) => void;
 }
@@ -75,7 +75,10 @@ export default function PhotoGrid({ photos, selectedSlug, collectionSlug, onSele
             ref={fileInputRef}
             className="hidden"
             onChange={(e) => {
-              if (e.target.files?.length) onAddPhotos(e.target.files);
+              if (e.target.files?.length) {
+                const fileArray = Array.from(e.target.files);
+                onAddPhotos(fileArray);
+              }
               e.target.value = '';
             }}
           />
