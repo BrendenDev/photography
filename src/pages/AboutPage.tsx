@@ -62,9 +62,9 @@ export default function AboutPage() {
                   "If you think you want to do it, just do it." - Dad
                 </blockquote>
                 <p>
-                All my projects and creations are thanks to the amazing people who support and inspire me everyday.
+                All my creations are thanks to the people in my life who inspire and support me everyday.
                 <br /> <br />
-                Thank you to my mom and dad for giving me the chance they never had and inspiring me to be better everyday. Thank you to my brother who supported all my efforts and believed in my own abilities more than myself. Thank you to my sister who makes me feel like I'm someone worth while and inspires me to try new things. Thank you to my partner who continues to love me unconditionally and inspires me to put in effort for more than just myself. Thank you to my best friend for always being there when it counts.
+                Thank you to my mom and dad for giving me the chance they never had and inspiring me to be better everyday.<br />Thank you to my brother who supported all my efforts and believed in my own abilities more than myself.<br />Thank you to my sister who makes me feel like I'm someone worth while and inspires me to try things I'm scared of.<br />Thank you to my partner who continues to love me unconditionally and teaches me to put in effort for more than just myself.<br />Thank you to my best friend for walking through early life with me and always showing up when I need it the most.
                 </p>
               </div>
             </div>
