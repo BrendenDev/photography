@@ -99,34 +99,35 @@ export default function PhotoGrid({ photos, selectedSlug, collectionSlug, onSele
                 onDragOver={(e) => handleDragOver(e, idx)}
                 onDrop={(e) => handleDrop(e, idx)}
                 onClick={() => onSelect(p.slug)}
-                className={`relative aspect-square cursor-pointer rounded overflow-hidden border-2 ${isSelected ? 'border-[var(--admin-text-accent)]' : 'border-transparent hover:border-[var(--admin-border)]'}`}
+                className={`group relative aspect-square cursor-pointer rounded overflow-hidden border-2 ${isSelected ? 'border-[var(--admin-text-accent)]' : 'border-transparent hover:border-[var(--admin-border)]'}`}
               >
                 <img src={url} alt={p.title || p.slug} className="w-full h-full object-cover pointer-events-none" />
+                {/* Position badge */}
+                <div className="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">{idx + 1}</div>
                 {p.isPending && (
                   <div className="absolute top-1 right-1 bg-blue-600 text-white text-[10px] px-1 rounded">New</div>
                 )}
-                <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-2 w-full flex justify-between items-end">
-                  <span className="text-xs text-white truncate flex-1">{p.title}</span>
-                  <div className="flex items-center gap-1 ml-2">
+                <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 p-1.5 w-full flex justify-between items-center">
+                  <div className="flex items-center gap-1">
                     {idx > 0 && (
                       <button
                         onClick={(e) => { e.stopPropagation(); movePhoto(idx, idx - 1); }}
-                        className="text-white/70 hover:text-white text-xs px-1"
-                        title="Move up"
-                      >↑</button>
+                        className="text-white/80 hover:text-white text-xs bg-white/10 hover:bg-white/20 rounded px-1.5 py-0.5 transition-colors"
+                        title="Move left"
+                      >←</button>
                     )}
                     {idx < photos.length - 1 && (
                       <button
                         onClick={(e) => { e.stopPropagation(); movePhoto(idx, idx + 1); }}
-                        className="text-white/70 hover:text-white text-xs px-1"
-                        title="Move down"
-                      >↓</button>
+                        className="text-white/80 hover:text-white text-xs bg-white/10 hover:bg-white/20 rounded px-1.5 py-0.5 transition-colors"
+                        title="Move right"
+                      >→</button>
                     )}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onDeletePhoto(p.slug); }}
-                      className="text-red-400 hover:text-red-300 text-xs px-1"
-                    >✕</button>
                   </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDeletePhoto(p.slug); }}
+                    className="text-red-400 hover:text-red-300 text-xs bg-white/10 hover:bg-red-900/30 rounded px-1.5 py-0.5 transition-colors"
+                  >✕</button>
                 </div>
               </div>
             );
