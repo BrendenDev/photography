@@ -131,10 +131,8 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
   }, [currentIndex]);
 
   const handlePhotoTap = useCallback(() => {
-    if (showInfo) { setShowInfo(false); return; }
-    setShowControls(s => !s);
-    if (!showControls) resetControlsTimer();
-  }, [showInfo, showControls, resetControlsTimer]);
+    setShowInfo(s => !s);
+  }, []);
 
   const currentPhoto = currentIndex >= 0 && currentIndex < photos.length ? photos[currentIndex] : null;
   const coverUrl = '';
@@ -329,8 +327,8 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
                   />
                 </div>
 
-                {/* Title bar at bottom — fades with controls */}
-                <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 pb-14 md:p-6 md:pb-16 pointer-events-none transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+                {/* Title bar at bottom — always visible */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 pb-14 md:p-6 md:pb-16 pointer-events-none">
                   <h3 className="font-heading text-base md:text-lg text-white/90 tracking-wider">{currentPhoto.title}</h3>
                   <p className="font-body text-xs text-white/50 mt-1">{currentPhoto.location}</p>
                 </div>
