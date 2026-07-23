@@ -32,10 +32,10 @@ export default function AboutPage() {
               <SpellCircle size={80} glowColor="cyan" animate={true} />
             </div>
 
-            <h2 className="font-heading text-xl text-arcane-amber tracking-wider mb-6">The Philosophy</h2>
+            <h2 className="font-heading text-xl text-arcane-amber tracking-wider mb-6">About this Archive</h2>
             <div className="space-y-5 font-body text-arcane-parchment-dim text-[15px] leading-relaxed">
               <p>
-                Philosphy??? might not need this
+                This archive is a fun project I've wanted to put together to display my photos and my learning as a photographer.
               </p>
             </div>
           </div>
@@ -51,19 +51,21 @@ export default function AboutPage() {
           className="mb-16"
         >
           <div className="relative bg-arcane-surface/30 border border-arcane-border rounded-lg p-8">
-            <h2 className="font-heading text-xl text-arcane-cyan tracking-wider mb-8">The Curator</h2>
+            <h2 className="font-heading text-xl text-arcane-cyan tracking-wider mb-8">Author's Note</h2>
             <div className="flex flex-col md:flex-row gap-8 items-start">
               {/* Portrait placeholder */}
               <div className="w-28 h-28 rounded-full bg-gradient-to-br from-arcane-deep to-arcane-void border border-arcane-border flex-shrink-0 flex items-center justify-center shadow-[0_0_20px_rgba(77,208,225,0.08)]">
                 <span className="font-display text-3xl text-arcane-brass/60">B</span>
               </div>
               <div className="font-body text-arcane-parchment-dim text-[15px] leading-relaxed space-y-4">
-                <p>
-                  About me!
-                </p>
                 <blockquote className="border-l-2 border-arcane-amber/40 pl-4 italic text-arcane-parchment/80">
-                  my fav quote
+                  "If you think you want to do it, just do it." - Dad
                 </blockquote>
+                <p>
+                All my projects and creations are thanks to the amazing people who support and inspire me everyday.
+                <br /> <br />
+                Thank you to my mom and dad for giving me the chance they never had and inspiring me to be better everyday. Thank you to my brother who supported all my efforts and believed in my own abilities more than myself. Thank you to my sister who makes me feel like I'm someone worth while and inspires me to try new things. Thank you to my partner who continues to love me unconditionally and inspires me to put in effort for more than just myself. Thank you to my best friend for always being there when it counts.
+                </p>
               </div>
             </div>
           </div>
