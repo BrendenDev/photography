@@ -1,0 +1,13 @@
+{
+  "title": "Test Collection",
+  "slug": "test-collection",
+  "volumeNumber": 2,
+  "featured": false,
+  "visible": true,
+  "photoOrder": [
+    "screenshot-2026-02-18-143357-mrxt58k0-0",
+    "screenshot-2026-02-18-143419-mrxt58n7-1",
+    "screenshot-2026-02-18-143632-mrxt58nv-2"
+  ],
+  "photoCount": 3
+}
