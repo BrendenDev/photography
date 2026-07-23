@@ -22,6 +22,8 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
   const [loading, setLoading] = useState(true);
 
   const [showInfo, setShowInfo] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const controlsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef(0);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -109,8 +111,30 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+      if (controlsTimer.current) clearTimeout(controlsTimer.current);
+    };
   }, []);
+
+  // Auto-hide controls after 3s on photo pages
+  const resetControlsTimer = useCallback(() => {
+    setShowControls(true);
+    if (controlsTimer.current) clearTimeout(controlsTimer.current);
+    controlsTimer.current = setTimeout(() => setShowControls(false), 3000);
+  }, []);
+
+  // Reset timer on page change
+  useEffect(() => {
+    if (currentIndex >= 0) resetControlsTimer();
+    else setShowControls(true); // Always show on title page
+  }, [currentIndex]);
+
+  const handlePhotoTap = useCallback(() => {
+    if (showInfo) { setShowInfo(false); return; }
+    setShowControls(s => !s);
+    if (!showControls) resetControlsTimer();
+  }, [showInfo, showControls, resetControlsTimer]);
 
   const currentPhoto = currentIndex >= 0 && currentIndex < photos.length ? photos[currentIndex] : null;
   const coverUrl = '';
@@ -293,7 +317,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
                 exit="exit"
                 transition={pageTransition}
                 className="w-full h-full relative cursor-pointer"
-                onClick={() => setShowInfo(s => !s)}
+                onClick={handlePhotoTap}
               >
                 <div className="absolute inset-0 bg-black">
                   <ProgressiveImage
@@ -305,9 +329,9 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
                   />
                 </div>
 
-                {/* Title bar at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6 pointer-events-none">
-                  <h3 className="font-heading text-lg text-white/90 tracking-wider">{currentPhoto.title}</h3>
+                {/* Title bar at bottom — fades with controls */}
+                <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 pb-14 md:p-6 md:pb-16 pointer-events-none transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+                  <h3 className="font-heading text-base md:text-lg text-white/90 tracking-wider">{currentPhoto.title}</h3>
                   <p className="font-body text-xs text-white/50 mt-1">{currentPhoto.location}</p>
                 </div>
 
@@ -371,6 +395,8 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
           </AnimatePresence>
       </motion.div>
 
+      {/* Controls wrapper — fades in/out on photo pages */}
+      <div className={`transition-opacity duration-500 ${currentIndex >= 0 && !showControls ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       {/* Nav arrows */}
       {(hasPrev || canGoPrevCollection) && (
         <button onClick={goPrev} className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all group" aria-label="Previous">
@@ -403,7 +429,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
       </button>
 
       {/* Bottom bar */}
-      <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/40 backdrop-blur-sm rounded-full px-3 md:px-4 py-1.5 flex items-center gap-2 md:gap-3 max-w-[90vw]">
+      <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/40 backdrop-blur-sm rounded-full px-3 md:px-4 py-1.5 flex items-center gap-2 md:gap-3 max-w-[90vw]" style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <span className="text-[10px] text-white/50 font-heading tracking-[0.15em]">
           {currentIndex === -1 ? 'Title Page' : `${currentIndex + 1} / ${totalPages}`}
         </span>
@@ -414,23 +440,27 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
               onClick={() => goTo(-1)}
               className="text-[10px] text-white/40 hover:text-white/70 font-heading tracking-[0.1em] transition-colors"
             >
-              ← Title Page
+              ← Title
+            </button>
+            <span className="text-[10px] text-white/20">·</span>
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowInfo(s => !s); }}
+              className="text-[10px] text-white/40 hover:text-white/70 font-heading tracking-[0.1em] transition-colors"
+            >
+              ℹ Info
             </button>
           </>
         )}
-        <span className="text-[10px] text-white/20">·</span>
-        <span className="hidden md:inline text-[10px] text-white/30 font-body">
-          {currentIndex >= 0 ? 'Click photo for details' : 'ESC to close'}
-        </span>
         {(canGoPrevCollection || canGoNextCollection) && (
           <>
             <span className="text-[10px] text-white/20">·</span>
             <span className="text-[10px] text-white/30 font-body">
-              {allCollections ? `${collectionIndex + 1} / ${allCollections.length} volumes` : ''}
+              {allCollections ? `${collectionIndex + 1} / ${allCollections.length} vol` : ''}
             </span>
           </>
         )}
       </div>
+      </div>{/* end controls wrapper */}
     </motion.div>
   );
 }

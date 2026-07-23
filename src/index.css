@@ -45,10 +45,6 @@
   --animate-flicker: flicker 4s ease-in-out infinite;
 }
 
-html, body {
-  overflow-x: hidden;
-  width: 100%;
-}
 
 @keyframes glow-pulse {
   0%, 100% { opacity: 0.4; }
@@ -114,6 +110,7 @@ html, body {
   #root {
     min-height: 100vh;
     background-color: var(--color-arcane-void);
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
