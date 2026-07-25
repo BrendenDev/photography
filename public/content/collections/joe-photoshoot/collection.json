@@ -1,0 +1,38 @@
+{
+  "title": "Joe Photoshoot",
+  "slug": "joe-photoshoot",
+  "volumeNumber": 1,
+  "featured": false,
+  "visible": true,
+  "photoOrder": [
+    "img-5351-mrzu6gd4-0",
+    "img-5361-mrzu6h1u-1",
+    "img-5368-mrzu6hrk-2",
+    "img-5383-mrzu6ixo-3",
+    "img-5402-mrzu6k1j-4",
+    "img-5409-mrzu6kwy-5",
+    "img-5310-mrzu9kcl-0",
+    "img-5320-mrzu9mh1-1",
+    "img-5321-mrzu9n26-2",
+    "img-5328-mrzu9nqt-3",
+    "img-5332-mrzu9odb-4",
+    "img-5333-mrzu9oyi-5",
+    "img-5341-mrzu9pw0-6",
+    "img-5399-mrzu9qoj-7",
+    "img-5407-mrzu9r82-8",
+    "img-5415-mrzu9rrx-9",
+    "img-5436-mrzu9sgb-10"
+  ],
+  "tags": [
+    "joe",
+    "portrait"
+  ],
+  "description": "Photoshoot for Joe",
+  "story": "I wanted to practice some more photography, and I felt a lot more confident coming into this one after screwing up some previous shoots. I wanted to give Joe some good photos because I know he likes looking at himself (joke). Despite all the photos he has of himself, I had a lot of trouble trying to get him to take this seriously. He's a good looking dude.",
+  "dateRange": {
+    "from": "2026-05-26",
+    "to": "2026-05-26"
+  },
+  "location": "Boulder, CO",
+  "photoCount": 17
+}

@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5383",
+  "slug": "img-5383-mrzu6ixo-3",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/joe-photoshoot/images/img-5383-mrzu6ixo-3-thumb.webp",
+    "lg": "content/collections/joe-photoshoot/images/img-5383-mrzu6ixo-3-lg.webp"
+  },
+  "dateTaken": "2026-05-26T19:50:59.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 200,
+    "shutterSpeed": "1/800",
+    "aperture": "f/5.6",
+    "focalLength": "55mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-05-26T19:50:59.000Z",
+    "software": "RapidRAW"
+  }
+}
