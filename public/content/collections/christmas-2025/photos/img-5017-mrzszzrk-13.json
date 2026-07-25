@@ -1,0 +1,29 @@
+{
+  "title": "IMG_5017",
+  "slug": "img-5017-mrzszzrk-13",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/christmas-2025/images/img-5017-mrzszzrk-13-thumb.webp",
+    "lg": "content/collections/christmas-2025/images/img-5017-mrzszzrk-13-lg.webp"
+  },
+  "dateTaken": "2025-12-28T00:43:08.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 1600,
+    "shutterSpeed": "1/50",
+    "aperture": "f/5",
+    "focalLength": "34mm",
+    "exposureCompensation": "0 EV",
+    "meteringMode": "Pattern",
+    "whiteBalance": "Auto",
+    "flash": "Flash did not fire, compulsory flash mode",
+    "dateTaken": "2025-12-28T00:43:08.000Z"
+  }
+}
