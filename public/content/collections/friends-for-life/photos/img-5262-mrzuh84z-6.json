@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5262",
+  "slug": "img-5262-mrzuh84z-6",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/friends-for-life/images/img-5262-mrzuh84z-6-thumb.webp",
+    "lg": "content/collections/friends-for-life/images/img-5262-mrzuh84z-6-lg.webp"
+  },
+  "dateTaken": "2026-05-24T19:29:06.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 200,
+    "shutterSpeed": "1/200",
+    "aperture": "f/5.6",
+    "focalLength": "51mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-05-24T19:29:06.000Z",
+    "software": "RapidRAW"
+  }
+}

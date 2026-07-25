@@ -1,0 +1,33 @@
+{
+  "title": "Friends for Life",
+  "slug": "friends-for-life",
+  "volumeNumber": 1,
+  "featured": false,
+  "visible": true,
+  "photoOrder": [
+    "img-5252-mrzuh2tq-0",
+    "img-5254-mrzuh3ub-1",
+    "img-5255-mrzuh4zg-2",
+    "img-5257-mrzuh5pq-3",
+    "img-5259-mrzuh6gj-4",
+    "img-5261-mrzuh7at-5",
+    "img-5262-mrzuh84z-6",
+    "img-5263-mrzuh8zu-7",
+    "img-5264-mrzuh9m8-8",
+    "img-5268-mrzuhaj7-9",
+    "img-5274-mrzuhb6n-10"
+  ],
+  "tags": [
+    "kuntal",
+    "ashley",
+    "home"
+  ],
+  "description": "Test photos of my friends, Kuntal and Ashley, and their pets, Teddy and Leo.",
+  "story": "I met Kuntal when I was starting out at RingCentral. I was on the train, 18, and felt really lonely working at a company full of graduated adults. Him stopping me at the train stop on our way to the office is one of the best things that happened to me in the past 3 years. Kuntal and Ashley are very dear to my heart.",
+  "dateRange": {
+    "from": "2026-05-24",
+    "to": "2026-05-24"
+  },
+  "location": "Elizabeth, CO",
+  "photoCount": 11
+}
