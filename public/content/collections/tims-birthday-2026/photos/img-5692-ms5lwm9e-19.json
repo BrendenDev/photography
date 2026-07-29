@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5692",
+  "slug": "img-5692-ms5lwm9e-19",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/tims-birthday-2026/images/img-5692-ms5lwm9e-19-thumb.webp",
+    "lg": "content/collections/tims-birthday-2026/images/img-5692-ms5lwm9e-19-lg.webp"
+  },
+  "dateTaken": "2026-07-28T23:11:24.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF70-300mm f/4-5.6 IS USM",
+    "iso": 400,
+    "shutterSpeed": "1/500",
+    "aperture": "f/5.6",
+    "focalLength": "300mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-07-28T23:11:24.000Z",
+    "software": "RapidRAW"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5666",
+  "slug": "img-5666-ms5lwkqb-16",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/tims-birthday-2026/images/img-5666-ms5lwkqb-16-thumb.webp",
+    "lg": "content/collections/tims-birthday-2026/images/img-5666-ms5lwkqb-16-lg.webp"
+  },
+  "dateTaken": "2026-07-28T22:49:14.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF70-300mm f/4-5.6 IS USM",
+    "iso": 200,
+    "shutterSpeed": "1/640",
+    "aperture": "f/5.6",
+    "focalLength": "300mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-07-28T22:49:14.000Z",
+    "software": "RapidRAW"
+  }
+}

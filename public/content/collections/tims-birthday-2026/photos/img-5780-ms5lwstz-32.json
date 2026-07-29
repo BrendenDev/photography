@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5780",
+  "slug": "img-5780-ms5lwstz-32",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/tims-birthday-2026/images/img-5780-ms5lwstz-32-thumb.webp",
+    "lg": "content/collections/tims-birthday-2026/images/img-5780-ms5lwstz-32-lg.webp"
+  },
+  "dateTaken": "2026-07-29T00:35:00.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 400,
+    "shutterSpeed": "1/100",
+    "aperture": "f/5.6",
+    "focalLength": "46mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-07-29T00:35:00.000Z",
+    "software": "RapidRAW"
+  }
+}
