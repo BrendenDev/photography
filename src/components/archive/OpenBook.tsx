@@ -22,9 +22,9 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
   const [loading, setLoading] = useState(true);
 
   const [showInfo, setShowInfo] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-  const controlsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
 
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -111,28 +111,26 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-      if (controlsTimer.current) clearTimeout(controlsTimer.current);
-    };
+    return () => { document.body.style.overflow = ''; };
   }, []);
 
-  // Auto-hide controls after 3s on photo pages
-  const resetControlsTimer = useCallback(() => {
-    setShowControls(true);
-    if (controlsTimer.current) clearTimeout(controlsTimer.current);
-    controlsTimer.current = setTimeout(() => setShowControls(false), 3000);
-  }, []);
 
-  // Reset timer on page change
-  useEffect(() => {
-    if (currentIndex >= 0) resetControlsTimer();
-    else setShowControls(true); // Always show on title page
-  }, [currentIndex]);
-
-  const handlePhotoTap = useCallback(() => {
+  // Desktop: tap photo for info
+  const handlePhotoTap = useCallback((_e: React.MouseEvent) => {
+    if (isMobile) return;
     setShowInfo(s => !s);
-  }, []);
+  }, [isMobile]);
+
+  // Mobile: tap left/right/center zones to navigate or show info
+  const handleMobileZoneTap = useCallback((e: React.MouseEvent) => {
+    if (!isMobile) return;
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const third = rect.width / 3;
+    if (x < third) { goPrev(); }
+    else if (x > third * 2) { goNext(); }
+    else { setShowInfo(s => !s); }
+  }, [isMobile, goPrev, goNext]);
 
   const currentPhoto = currentIndex >= 0 && currentIndex < photos.length ? photos[currentIndex] : null;
   const coverUrl = '';
@@ -167,7 +165,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
       {/* Backdrop */}
       <motion.div
         className="absolute inset-0 bg-black/90"
-        onClick={handleClose}
+        onClick={isMobile ? undefined : handleClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       />
@@ -179,10 +177,16 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         style={{ boxShadow: '0 20px 80px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.1)' }}
-        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+          touchStartY.current = e.touches[0].clientY;
+        }}
         onTouchEnd={(e) => {
           const dx = e.changedTouches[0].clientX - touchStartX.current;
-          if (Math.abs(dx) > 50) { dx < 0 ? goNext() : goPrev(); }
+          const dy = e.changedTouches[0].clientY - touchStartY.current;
+          if (Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            dx < 0 ? goNext() : goPrev();
+          }
         }}
       >
           <AnimatePresence mode="wait" initial={false}>
@@ -314,8 +318,8 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
                 animate="center"
                 exit="exit"
                 transition={pageTransition}
-                className="w-full h-full relative cursor-pointer"
-                onClick={handlePhotoTap}
+                className="w-full h-full relative"
+                onClick={isMobile ? handleMobileZoneTap : handlePhotoTap}
               >
                 <div className="absolute inset-0 bg-black">
                   <ProgressiveImage
@@ -394,9 +398,9 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
       </motion.div>
 
       {/* Controls wrapper — fades in/out on photo pages */}
-      <div className={`transition-opacity duration-500 ${currentIndex >= 0 && !showControls ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      {/* Nav arrows */}
-      {(hasPrev || canGoPrevCollection) && (
+      <div>
+      {/* Nav arrows — desktop only (mobile uses swipe + zone taps + bottom bar arrows) */}
+      {!isMobile && (hasPrev || canGoPrevCollection) && (
         <button onClick={goPrev} className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all group" aria-label="Previous">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           {!hasPrev && prevCollection && (
@@ -406,7 +410,7 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
           )}
         </button>
       )}
-      {(hasNext || canGoNextCollection) && (
+      {!isMobile && (hasNext || canGoNextCollection) && (
         <button onClick={goNext} className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all group" aria-label="Next">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           {!hasNext && nextCollection && (
@@ -428,6 +432,12 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
 
       {/* Bottom bar */}
       <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 rounded-full px-3 md:px-4 py-1.5 flex items-center gap-2 md:gap-3 max-w-[90vw]" style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        {/* Mobile prev arrow in bottom bar */}
+        {isMobile && currentIndex >= 0 && (hasPrev || canGoPrevCollection) && (
+          <button onClick={goPrev} className="text-white/60 active:text-white p-1" aria-label="Previous">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        )}
         <span className="text-[10px] text-white/50 font-heading tracking-[0.15em]">
           {currentIndex === -1 ? 'Title Page' : `${currentIndex + 1} / ${totalPages}`}
         </span>
@@ -436,14 +446,14 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
             <span className="text-[10px] text-white/20">·</span>
             <button
               onClick={() => goTo(-1)}
-              className="text-[10px] text-white/40 hover:text-white/70 font-heading tracking-[0.1em] transition-colors"
+              className="text-[10px] text-white/40 hover:text-white/70 active:text-white font-heading tracking-[0.1em] transition-colors"
             >
               ← Title
             </button>
             <span className="text-[10px] text-white/20">·</span>
             <button
               onClick={(e) => { e.stopPropagation(); setShowInfo(s => !s); }}
-              className="text-[10px] text-white/40 hover:text-white/70 font-heading tracking-[0.1em] transition-colors"
+              className="text-[10px] text-white/40 hover:text-white/70 active:text-white font-heading tracking-[0.1em] transition-colors"
             >
               ℹ Info
             </button>
@@ -456,6 +466,12 @@ export default function OpenBook({ collection, onClose, allCollections, onSwitch
               {allCollections ? `${collectionIndex + 1} / ${allCollections.length} vol` : ''}
             </span>
           </>
+        )}
+        {/* Mobile next arrow in bottom bar */}
+        {isMobile && currentIndex >= 0 && (hasNext || canGoNextCollection) && (
+          <button onClick={goNext} className="text-white/60 active:text-white p-1" aria-label="Next">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
         )}
       </div>
       </div>{/* end controls wrapper */}

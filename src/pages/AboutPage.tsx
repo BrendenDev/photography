@@ -84,7 +84,11 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 font-body text-sm">
               <div>
                 <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Framework</dt>
-                <dd className="text-arcane-parchment-dim">React + TypeScript + Vite</dd>
+                <dd className="text-arcane-parchment-dim">React 19 + TypeScript 6</dd>
+              </div>
+              <div>
+                <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Build</dt>
+                <dd className="text-arcane-parchment-dim">Vite 8</dd>
               </div>
               <div>
                 <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Styling</dt>
@@ -92,19 +96,23 @@ export default function AboutPage() {
               </div>
               <div>
                 <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Animation</dt>
-                <dd className="text-arcane-parchment-dim">Motion (formerly Framer Motion)</dd>
+                <dd className="text-arcane-parchment-dim">Motion + Canvas API</dd>
               </div>
               <div>
                 <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Image Format</dt>
-                <dd className="text-arcane-parchment-dim">WebP (responsive variants)</dd>
+                <dd className="text-arcane-parchment-dim">WebP (thumb + lg variants)</dd>
+              </div>
+              <div>
+                <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Search</dt>
+                <dd className="text-arcane-parchment-dim">Fuse.js (fuzzy)</dd>
               </div>
               <div>
                 <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Content Pipeline</dt>
-                <dd className="text-arcane-parchment-dim">JSON + Avalonia Desktop App</dd>
+                <dd className="text-arcane-parchment-dim">GitHub API + Browser Admin</dd>
               </div>
               <div>
-                <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Deployment</dt>
-                <dd className="text-arcane-parchment-dim">GitHub Pages</dd>
+                <dt className="text-arcane-muted mb-1 text-xs tracking-wider uppercase">Hosting</dt>
+                <dd className="text-arcane-parchment-dim">GitHub Pages + Cloudflare</dd>
               </div>
             </div>
           </div>
