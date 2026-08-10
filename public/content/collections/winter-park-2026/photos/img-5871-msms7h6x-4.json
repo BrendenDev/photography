@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5871",
+  "slug": "img-5871-msms7h6x-4",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/winter-park-2026/images/img-5871-msms7h6x-4-thumb.webp",
+    "lg": "content/collections/winter-park-2026/images/img-5871-msms7h6x-4-lg.webp"
+  },
+  "dateTaken": "2026-08-08T21:02:02.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 400,
+    "shutterSpeed": "1/800",
+    "aperture": "f/5",
+    "focalLength": "31mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-08-08T21:02:02.000Z",
+    "software": "RapidRAW"
+  }
+}

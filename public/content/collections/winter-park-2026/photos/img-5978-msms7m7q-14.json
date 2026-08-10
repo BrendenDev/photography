@@ -1,0 +1,27 @@
+{
+  "title": "IMG_5978",
+  "slug": "img-5978-msms7m7q-14",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/winter-park-2026/images/img-5978-msms7m7q-14-thumb.webp",
+    "lg": "content/collections/winter-park-2026/images/img-5978-msms7m7q-14-lg.webp"
+  },
+  "dateTaken": "2026-08-08T21:59:22.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 400,
+    "shutterSpeed": "1/800",
+    "aperture": "f/4.5",
+    "focalLength": "24mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-08-08T21:59:22.000Z",
+    "software": "RapidRAW"
+  }
+}

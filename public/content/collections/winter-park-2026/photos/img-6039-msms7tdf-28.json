@@ -1,0 +1,27 @@
+{
+  "title": "IMG_6039",
+  "slug": "img-6039-msms7tdf-28",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/winter-park-2026/images/img-6039-msms7tdf-28-thumb.webp",
+    "lg": "content/collections/winter-park-2026/images/img-6039-msms7tdf-28-lg.webp"
+  },
+  "dateTaken": "2026-08-09T20:03:48.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 400,
+    "shutterSpeed": "1/1000",
+    "aperture": "f/5.6",
+    "focalLength": "55mm",
+    "exposureCompensation": "0 EV",
+    "dateTaken": "2026-08-09T20:03:48.000Z",
+    "software": "RapidRAW"
+  }
+}
