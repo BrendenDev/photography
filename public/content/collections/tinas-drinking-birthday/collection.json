@@ -1,0 +1,29 @@
+{
+  "title": "Tina's Drinking Birthday",
+  "slug": "tinas-drinking-birthday",
+  "volumeNumber": 1,
+  "featured": false,
+  "visible": true,
+  "photoOrder": [
+    "img-6172-mt0rx4i7-0",
+    "img-6157-mt0rx5g9-1",
+    "img-6082-mt0rx694-2",
+    "img-6187-mt0rx6wt-3",
+    "img-6183-mt0rx7qw-4",
+    "img-6152-mt0rx8hn-5",
+    "img-6130-mt0rx9fx-6",
+    "img-6121-mt0rxa4y-7",
+    "img-6075-mt0rxatj-8",
+    "img-6085-mt0rxbht-9",
+    "img-6069-mt0rxca8-10",
+    "img-6067-mt0rxcue-11"
+  ],
+  "description": "Tina's 93rd Birthday!",
+  "story": "Tina wanted her birthday at the Happy Camper and told us to dress \"cute, but not fancy.\" ",
+  "location": "Denver, CO",
+  "dateRange": {
+    "from": "2026-08-15",
+    "to": "2026-08-15"
+  },
+  "photoCount": 12
+}

@@ -1,0 +1,26 @@
+{
+  "title": "IMG_6082",
+  "slug": "img-6082-mt0rx694-2",
+  "orientation": "landscape",
+  "dimensions": {
+    "width": 6000,
+    "height": 4000
+  },
+  "variants": {
+    "thumb": "content/collections/tinas-drinking-birthday/images/img-6082-mt0rx694-2-thumb.webp",
+    "lg": "content/collections/tinas-drinking-birthday/images/img-6082-mt0rx694-2-lg.webp"
+  },
+  "dateTaken": "2026-08-16T00:17:02.000Z",
+  "metadata": {
+    "cameraMake": "Canon",
+    "cameraModel": "Canon EOS 200D",
+    "camera": "Canon Canon EOS 200D",
+    "lens": "EF-S18-55mm f/4-5.6 IS STM",
+    "iso": 400,
+    "shutterSpeed": "1/250",
+    "aperture": "f/4.5",
+    "focalLength": "24mm",
+    "dateTaken": "2026-08-16T00:17:02.000Z",
+    "software": "RapidRAW"
+  }
+}
