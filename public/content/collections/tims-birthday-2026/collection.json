@@ -5,7 +5,6 @@
   "featured": false,
   "visible": true,
   "photoOrder": [
-    "img-5502-ms5lwcd9-0",
     "img-5511-ms5lwcw8-1",
     "img-5517-ms5lwdfb-2",
     "img-5521-ms5lwdxf-3",
@@ -28,7 +27,6 @@
     "img-5694-ms5lwmuw-20",
     "img-5720-ms5lwnc4-21",
     "img-5723-ms5lwnuu-22",
-    "img-5725-ms5lwoey-23",
     "img-5726-ms5lwoxi-24",
     "img-5728-ms5lwph1-25",
     "img-5749-ms5lwpz2-26",
@@ -56,5 +54,5 @@
     "from": "2026-07-28",
     "to": "2026-07-28"
   },
-  "photoCount": 34
+  "photoCount": 32
 }
